@@ -1,0 +1,13 @@
+project: "Mode"
+exp_name: "RN50-OBJ-GUIDED"
+model: "RN50-OBJ"
+batch_size: 64
+#num_workers: 1
+epochs: 12
+resize_size: 256
+input_size: 224
+pipeline: "VAWInstancePipeline"
+model_config_name: "RN50 Config"
+model_config: "configs/models/vawc_guided_neg_1274_rn50_obj.yml"
+weight: "exp/vawc_kn_32"
+amp: True
