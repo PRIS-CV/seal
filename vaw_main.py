@@ -16,7 +16,7 @@ from info.utils.utils import *
 from info.utils.eval_utils import *
 from info.utils.evaluators import *
 
-VAW_DIR = "data/VAW_Clean_0_1/data-kn-32"
+VAW_DIR = "data/VAWs/data-kn-32"
 VG_DIR = "/mnt/sdb/data/wangxinran/dataset/VG"
 print(VAW_DIR)
 
