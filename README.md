@@ -22,7 +22,7 @@ Download original VAW dataset at
 Download VG dataset at 
 
 ### Download Word-embedding
-You need to download relevant word embeddings at [Google Drive](), and put it under `data/embeddings/`.
+You need to download relevant word embeddings at [Google Drive](https://drive.google.com/drive/folders/18M4F7vA0EOZqlp88E4W9gatQUTcSHYd6?usp=sharing), and put it under `data/embeddings/`.
 
 ### Clean The VAW Dataset
 Use `clean.ipynb` in `notebook/` to clean the original VAW dataset to get cleaned VAW dataset.
