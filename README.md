@@ -27,4 +27,17 @@ Download VG dataset at
 
 
 ### Clean The VAW Dataset
-Use `clean.ipynb` in `notebook/` to clean the original VAW dataset to get cleaned VAW dataset
+Use `clean.ipynb` in `notebook/` to clean the original VAW dataset to get cleaned VAW dataset.
+
+
+### Run
+
+Train
+```
+sh train.sh
+```
+
+Test
+```
+sh test.sh
+```
