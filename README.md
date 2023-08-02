@@ -1,11 +1,12 @@
-# seal
+# Seal
 Semantic Enhanced Attribute Learning
 
-This is the code repo for the paper:
-1. Vision-Language Assisted Attribute Learning
-2. Attribute Learning with Knowledge Enhanced Partial Annotations
+## News
+One paper accepted in ACM MM 2023: _Hierarchical Visual Attribute Learning in the Wild_. The relevant Code will be updated soon.
 
-
+## Paper List
+1. Vision-Language Assisted Attribute Learning (NIDC-2023)
+2. Attribute Learning with Knowledge Enhanced Partial Annotations (ICIP-2023)
 
 ## Preparation
 
@@ -18,8 +19,8 @@ pip install -e .
 ```
 
 ### Download VAW and VG Dataset
-Download original VAW dataset at 
-Download VG dataset at 
+Download VAW dataset at https://github.com/adobe-research/vaw_dataset
+Download VG v1.4 dataset at https://visualgenome.org/
 
 ### Download Word-embedding
 You need to download relevant word embeddings at [Google Drive](https://drive.google.com/drive/folders/18M4F7vA0EOZqlp88E4W9gatQUTcSHYd6?usp=sharing), and put it under `data/embeddings/`.
