@@ -20,6 +20,7 @@ pip install -e .
 
 ### Download VAW and VG Dataset
 Download VAW dataset at https://github.com/adobe-research/vaw_dataset
+
 Download VG v1.4 dataset at https://visualgenome.org/
 
 ### Download Word-embedding
