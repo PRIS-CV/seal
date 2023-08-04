@@ -1,22 +1,33 @@
-# Seal
-Semantic Enhanced Attribute Learning
+# SEAL: Semantic Enhanced Attribute Learning
+SEAL is a PyTorch-based attribute learning package designed to facilitate the development and evaluation of attribute learning models. SEAL is designed to offer a flexible and modular framework for building attribute learning models. It leverages semantic information and uses state-of-the-art techniques to enhance the accuracy and interpretability of the learned attributes.
 
-## News
-One paper accepted in ACM MM 2023: _Hierarchical Visual Attribute Learning in the Wild_. The relevant Code will be updated soon.
+## News 🚀
+*August 4, 2023*: One paper accepted in ACM MM 2023: *Hierarchical Visual Attribute Learning in the Wild*. The relevant Code will be updated soon.
 
-## Paper List
-1. Vision-Language Assisted Attribute Learning (NIDC-2023)
-2. Attribute Learning with Knowledge Enhanced Partial Annotations (ICIP-2023)
 
-## Preparation
+## Attribute Learning Models
 
-Clone the repo and install the info api lib:
+| Model Name                                | Paper                                                                                                     |
+|-------------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| Vision-language Guided Selective Loss     | [Vision-Language Assisted Attribute Learning]()                       |
+| Knowledge Enhanced Selective Loss         | [Attribute Learning with Knowledge Enhanced Partial Annotations]() |
+| Object-specific Attribute Relation Net    | [Hierarchical Visual Attribute Learning in the Wild]() |
+
+## Installation 
+
+Here's how you can get started with SEAL:
+
+1. Clone the repo and install:
 
 ```
-git clone https://github.com/GriffinLiang/seal.git
+git clone https://github.com/PRIS-CV/seal.git
 cd /path/to/seal
 pip install -e .
 ```
+
+
+2. Import the models and start building attribute learning pipelines.
+
 
 ### Download VAW and VG Dataset
 Download VAW dataset at https://github.com/adobe-research/vaw_dataset
@@ -30,7 +41,6 @@ You need to download relevant word embeddings at [Google Drive](https://drive.go
 Use `clean.ipynb` in `notebook/` to clean the original VAW dataset to get cleaned VAW dataset.
 
 
-
 ### Run
 
 Train
@@ -42,3 +52,9 @@ Test
 ```
 sh test.sh
 ```
+
+## Citation
+
+If you use SEAL in your research or project, please consider citing the relevant papers.
+
+---
