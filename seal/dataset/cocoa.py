@@ -1,29 +1,26 @@
 import pickle
-import numpy as np
 from PIL import Image
 import os.path as op
 import torch
-from torchvision import datasets as datasets
 from pycocotools.coco import COCO
-from IPython import embed
 
-from seal.data import aldataset
-from seal.data.data import ALDataset
-from seal.data.utils import *
+from . import dataset
+from .dataset import ALDataset
+from .utils import *
 
 
-@aldataset("COCOAttributesInstanceLevelDataset")
-class COCOAttributesInstanceLevelDataset(ALDataset):
+@dataset("COCOAInstanceDataset")
+class COCOAInstanceDataset(ALDataset):
 
-    def __init__(self, cfg, image_path, anno_path, mode, transform=None) -> None:
-        super().__init__(cfg)
+    def __init__(self, d_cocoa, d_coco, mode, transform=None) -> None:
+        super().__init__()
 
         if mode == 'test':
             mode = 'val'
         self.transform = transform
-        self.f_attr_anno = '/mnt/sdb/data/wangxinran/dataset/COCO_ATTRIBUTES/cocottributes/data/cocottributes_eccv_version.pkl'
-        self.f_coco_anno = f'/mnt/sdb/data/wangxinran/dataset/COCO2014/annotations/instances_{mode}2014.json'
-        self.d_coco_image = f'/mnt/sdb/data/wangxinran/dataset/COCO2014/{mode}2014/'
+        self.f_attr_anno = op.join(d_cocoa, f'data/cocottributes_eccv_version.pkl')
+        self.f_coco_anno = op.join(d_coco, f'annotations/instances_{mode}2014.json')
+        self.d_coco_image = op.join(d_coco, f'{mode}2014/')
         self.coco = COCO(self.f_coco_anno)
         self.load_attr_anno()
         
@@ -90,9 +87,6 @@ class COCOAttributesInstanceLevelDataset(ALDataset):
         if self.transform is not None:
             img, bbox, mask = self.transform(img, bbox, mask)
         
-        # if img.shape[0] == 1:
-        #     print(ann_id)
-
         instance = {
             'i': img,
             'o': obj_index,

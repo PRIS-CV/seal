@@ -1,20 +1,15 @@
-__all__ = ["build_dataset", "build_transform", "build_pipeline", "build_data_encoder"]
-
-
 import os
 import importlib
 
-from seal.data.data import ALDataset, Transform, Pipeline, DataEncoder
+from seal.data.data import Transform, Pipeline, DataEncoder
 
 
-__DATASET_DICT__ = {}
+
 __TRANSFORM_DICT__ = {}
 __PIPELINE_DICT__ = {}
 __DATAENCODER_DICT__ = {}
 
 
-def build_dataset(name):
-    return __DATASET_DICT__[name]
 
 def build_transform(name):
     return __TRANSFORM_DICT__[name]
@@ -25,17 +20,6 @@ def build_pipeline(name):
 def build_data_encoder(name):
     return __DATAENCODER_DICT__[name]
 
-def aldataset(name):
-    
-    def register_function_fn(cls):
-        if name in __DATASET_DICT__:
-            raise ValueError("Name %s already registered!" % name)
-        if not issubclass(cls, ALDataset):
-            raise ValueError("Class %s is not a subclass of %s" % (cls, ALDataset))
-        __DATASET_DICT__[name] = cls
-        return cls
-
-    return register_function_fn
 
 def transform(name):
     

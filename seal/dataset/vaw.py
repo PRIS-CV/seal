@@ -5,15 +5,15 @@ from tqdm import tqdm
 import torch
 from torchvision import datasets as datasets
 
-from seal.data import aldataset
-from seal.data.data import ALDataset
-from seal.data.utils import *
+from . import dataset
+from .dataset import ALDataset
+from seal.dataset.utils import *
 
 
-@aldataset("VAWInstanceLevelDataset")
+@dataset("VAWInstanceLevelDataset")
 class VAWInstanceLevelDataset(ALDataset):
     def __init__(self, cfg, image_path, anno_path, mode, transform=None, *args, **kwargs):
-        super().__init__(cfg)
+        super().__init__()
         self.image_path = image_path
         self.anno_path = anno_path
         self.transform = transform
@@ -134,10 +134,10 @@ class VAWInstanceLevelDataset(ALDataset):
         return instance
 
 
-@aldataset("VAWImageLevelDataset")
+@dataset("VAWImageLevelDataset")
 class VAWImageLevelDataset(VAWInstanceLevelDataset):
     
-    def __init__(self, cfg, image_path, anno_path, mode, transform=None):
+    def __init__(self, cfg, image_path, anno_path, mode, transform=None, *args, **kwargs):
         super().__init__(cfg, image_path, anno_path, mode, transform)
         self._trans_instances_to_image()
         

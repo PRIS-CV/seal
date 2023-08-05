@@ -10,6 +10,7 @@ import wandb
 
 from seal.config import VAConfig
 from seal.data import *
+from seal.dataset import build_dataset
 from seal.models import build_model, build_model_config
 from seal.utils import build_eval_util, build_train_util
 from seal.utils.utils import *

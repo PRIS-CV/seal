@@ -3,19 +3,6 @@ from torch.utils.data.dataset import Dataset
 from torch import Tensor
 
 
-class ALDataset(Dataset):
-    
-    def __init__(self, cfg) -> None:
-        super().__init__()
-        self.cfg = cfg
-
-    def __getitem__(self, index):
-        raise NotImplementedError("Each attribute learning dataset should implement __getitem__ method")
-
-    def __len__(self):
-        raise NotImplementedError("Each attribute learning dataset should implement __len__ method")
-
-
 class Transform:
     
     def __init__(self) -> None:

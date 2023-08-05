@@ -3,7 +3,7 @@ import os.path as op
 import torch
 from torch import Tensor
 
-from seal.data.utils import load_json
+from seal.dataset.utils import load_json
 from seal.models.loss import loss
 from seal.models.loss.loss import Loss
 

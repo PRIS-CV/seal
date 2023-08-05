@@ -4,7 +4,7 @@ import torch
 from torch import nn, Tensor
 from torchvision.ops import roi_align
 
-from seal.data.utils import load_json
+from seal.dataset.utils import load_json
 
 
 def clean_state_dict(state_dict):
