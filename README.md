@@ -2,7 +2,7 @@
 SEAL is a PyTorch-based attribute learning package designed to facilitate the development and evaluation of attribute learning models. SEAL is designed to offer a flexible and modular framework for building attribute learning models. It leverages semantic information and uses state-of-the-art techniques to enhance the accuracy and interpretability of the learned attributes.
 
 ## News 🚀
-*August 4, 2023*: One paper accepted in ACM MM 2023: *Hierarchical Visual Attribute Learning in the Wild*. The relevant Code will be updated soon.
+*August 4, 2023*: One paper accepted in ACM MM 2023: **Hierarchical Visual Attribute Learning in the Wild**. The relevant code will be updated soon.
 
 
 ## Attribute Learning Models
@@ -27,6 +27,10 @@ pip install -e .
 
 
 2. Import the models and start building attribute learning pipelines.
+
+
+## Docs and Tutorial 📚
+
 
 
 ### Download VAW and VG Dataset
