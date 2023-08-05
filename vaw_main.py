@@ -8,19 +8,17 @@ from torch.optim import lr_scheduler
 from torch.utils.data.dataloader import DataLoader
 import wandb
 
-from info.config import VAConfig
-from info.data import *
-from info.models import build_model, build_model_config
-from info.utils import build_eval_util, build_train_util
-from info.utils.utils import *
-from info.utils.eval_utils import *
-from info.utils.evaluators import *
+from seal.config import VAConfig
+from seal.data import *
+from seal.models import build_model, build_model_config
+from seal.utils import build_eval_util, build_train_util
+from seal.utils.utils import *
+from seal.utils.eval_utils import *
+from seal.utils.evaluators import *
 
-VAW_DIR = "data/VAWs/data-kn-32"
+VAW_DIR = "data/VAW/data-kn-32"
 VG_DIR = "/mnt/sdb/data/wangxinran/dataset/VG"
-print(VAW_DIR)
 
-#edge_file = op.join(VAW_DIR, "improve_edges.json")
 
 fpath_attr2idx = op.join(VAW_DIR, 'attribute_index.json')
 fpath_attr_type = op.join(VAW_DIR, 'attribute_types.json')
