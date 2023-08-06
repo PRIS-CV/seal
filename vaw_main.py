@@ -32,9 +32,9 @@ def train(cfg, device):
     train_transforms = build_pipeline(cfg.pipeline)(cfg, mode="train")
     evalu_transforms = build_pipeline(cfg.pipeline)(cfg, mode="evalu")
 
-    trainset = build_dataset(cfg.dataset)(cfg, image_path=VG_DIR, anno_path=VAW_DIR, mode='train', transform=train_transforms)
-    valset = build_dataset(cfg.dataset)(cfg, image_path=VG_DIR, anno_path=VAW_DIR, mode='val', transform=evalu_transforms)
-    testset = build_dataset(cfg.dataset)(cfg, image_path=VG_DIR, anno_path=VAW_DIR, mode='test', transform=evalu_transforms)
+    trainset = build_dataset(cfg.dataset)(image_path=VG_DIR, anno_path=VAW_DIR, mode='train', transform=train_transforms)
+    valset = build_dataset(cfg.dataset)(image_path=VG_DIR, anno_path=VAW_DIR, mode='val', transform=evalu_transforms)
+    testset = build_dataset(cfg.dataset)(image_path=VG_DIR, anno_path=VAW_DIR, mode='test', transform=evalu_transforms)
     
     try:
         collate_fn = trainset.collate_fn
@@ -109,12 +109,8 @@ def test(cfg, device):
 
     evalu_transforms = build_pipeline(cfg.pipeline)(cfg, mode="evalu")
 
-    # valset = build_dataset(cfg.dataset)(cfg, image_path=VG_DIR, anno_path=VAW_DIR, mode='val', transform=evalu_transforms)
-    testset = build_dataset(cfg.dataset)(cfg, image_path=VG_DIR, anno_path=VAW_DIR, mode='test', transform=evalu_transforms)
+    testset = build_dataset(cfg.dataset)(image_path=VG_DIR, anno_path=VAW_DIR, mode='test', transform=evalu_transforms)
     
-    # valloader = torch.utils.data.DataLoader(
-    #     valset, batch_size=cfg.batch_size, shuffle=False,
-    #     num_workers=cfg.num_workers, pin_memory=False, drop_last=True)
     testloader = torch.utils.data.DataLoader(
         testset, batch_size=cfg.batch_size, shuffle=False,
         num_workers=cfg.num_workers, pin_memory=False, drop_last=False)
@@ -137,13 +133,10 @@ def test(cfg, device):
     except:
         print("Cannot find the weight! Using Initialized Weight")
         
-
     print("Testing the model of highest validation mAP.")
     eval_util = build_eval_util(cfg.eval_util)
-    evaluator = VAWEvaluator(fpath_attr2idx=fpath_attr2idx, fpath_attr_headtail=fpath_attr_headtail, fpath_attr_parent_type=fpath_attr_parent_type, fpath_attr_type=fpath_attr_type)
-    # val_mAP_score = eval_util(model, valloader, evaluator, device)
+    evaluator = VAWEvaluator(fpath_attr2idx=fpath_attr2idx, fpath_attr_headtail=fpath_attr_headtail, fpath_attr_parent_type=fpath_attr_parent_type, fpath_attr_type=fpath_attr_type)    
     test_mAP_score = eval_util(model, testloader, evaluator, device)
-    # print(f"\n\n VAL mAP: {val_mAP_score:4f}, Test mAP: {test_mAP_score: 4f}")
     print(f"\n\n Test mAP: {test_mAP_score: 4f}")
 
 

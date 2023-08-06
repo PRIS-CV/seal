@@ -69,3 +69,17 @@ class PipelineConfig(_BaseConfig):
     type: str = PIPELINE_CONFIG_TYPE
 
 
+_CONFIG_TYPES = {
+    BASE_CONFIG_TYPE: _BaseConfig,
+    DATASET_CONFIG_TYPE: DatasetConfig,
+    MODEL_CONFIG_TYPE: ModelConfig,
+    EVAL_CONFIG_TYPE: EvalConfig,
+    TRAIN_CONFIG_TYPE: TrainConfig,
+    PIPELINE_CONFIG_TYPE: PipelineConfig
+}
+
+
+def build_config(config_type: str) -> _BaseConfig:
+    if config_type not in _CONFIG_TYPES:
+        raise ValueError(f"Unknown config type: {config_type}")
+    return _CONFIG_TYPES[config_type]
