@@ -12,7 +12,8 @@ from seal.dataset.utils import *
 
 @dataset("VAWInstanceLevelDataset")
 class VAWInstanceLevelDataset(ALDataset):
-    def __init__(self, cfg, image_path, anno_path, mode, transform=None, *args, **kwargs):
+    def __init__(self, image_path, anno_path, mode, transform=None, *args, **kwargs):
+        
         super().__init__()
         self.image_path = image_path
         self.anno_path = anno_path
@@ -137,8 +138,8 @@ class VAWInstanceLevelDataset(ALDataset):
 @dataset("VAWImageLevelDataset")
 class VAWImageLevelDataset(VAWInstanceLevelDataset):
     
-    def __init__(self, cfg, image_path, anno_path, mode, transform=None, *args, **kwargs):
-        super().__init__(cfg, image_path, anno_path, mode, transform)
+    def __init__(self, image_path, anno_path, mode, transform=None, *args, **kwargs):
+        super().__init__(image_path, anno_path, mode, transform)
         self._trans_instances_to_image()
         
 
