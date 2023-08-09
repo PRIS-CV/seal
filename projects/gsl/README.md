@@ -1,5 +1,5 @@
 # Vision-language Guided Selective Loss
-Project page for "Vision-language Guided Selective Loss" (NIDC 2023)
+Project page for "Vision-Language Assisted Attribute Learning" (NIDC 2023)
 
 
 ## Abstract 
@@ -9,5 +9,5 @@ Qualitative evaluation demonstrates the ability of the proposed method in predic
 
 ![Fig2](gsl_fig2.png)
 
-Some prediction results
+## Prediction Visualization
 ![Fig4](gsl_fig4.png)
