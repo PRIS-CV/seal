@@ -7,9 +7,9 @@ MODEL_CONFIG_TYPE = "model config"
 EVAL_CONFIG_TYPE = "eval config"
 TRAIN_CONFIG_TYPE = "train config"
 PIPELINE_CONFIG_TYPE = "pipeline config"
+TASK_CONFIG_TYPE = "task config"
 
-
-class _BaseConfig(object):
+class BaseConfig(object):
     
     type: str = BASE_CONFIG_TYPE
     
@@ -25,7 +25,7 @@ class _BaseConfig(object):
         self._settings.update(**kwargs)
 
     def __repr__(self) -> str:
-        return f"\n{self.name}({self.type}):\n{self._settings}"
+        return f"\n({self.type}):\n{self._settings}"
 
     def save_to_json(self, path):
         with open(path, "w") as f:
@@ -44,42 +44,47 @@ class _BaseConfig(object):
             self._settings = load_content["settings"]
     
 
-class DatasetConfig(_BaseConfig):
+class DatasetConfig(BaseConfig):
     
     type: str = DATASET_CONFIG_TYPE
     
 
-class ModelConfig(_BaseConfig):
+class ModelConfig(BaseConfig):
         
     type: str = MODEL_CONFIG_TYPE
 
 
-class EvalConfig(_BaseConfig):
+class EvalConfig(BaseConfig):
             
     type: str = EVAL_CONFIG_TYPE
 
 
-class TrainConfig(_BaseConfig):
+class TrainConfig(BaseConfig):
                     
     type: str = TRAIN_CONFIG_TYPE              
 
 
-class PipelineConfig(_BaseConfig):
+class PipelineConfig(BaseConfig):
 
     type: str = PIPELINE_CONFIG_TYPE
 
 
+class TaskConfig(BaseConfig):
+    type: str = TASK_CONFIG_TYPE
+
+
 _CONFIG_TYPES = {
-    BASE_CONFIG_TYPE: _BaseConfig,
+    BASE_CONFIG_TYPE: BaseConfig,
     DATASET_CONFIG_TYPE: DatasetConfig,
     MODEL_CONFIG_TYPE: ModelConfig,
     EVAL_CONFIG_TYPE: EvalConfig,
     TRAIN_CONFIG_TYPE: TrainConfig,
-    PIPELINE_CONFIG_TYPE: PipelineConfig
+    PIPELINE_CONFIG_TYPE: PipelineConfig,
+    TASK_CONFIG_TYPE: TaskConfig
 }
 
 
-def build_config(config_type: str) -> _BaseConfig:
+def build_config(config_type: str) -> BaseConfig:
     if config_type not in _CONFIG_TYPES:
         raise ValueError(f"Unknown config type: {config_type}")
     return _CONFIG_TYPES[config_type]

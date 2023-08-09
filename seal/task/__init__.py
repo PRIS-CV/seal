@@ -24,4 +24,4 @@ def task(name):
 for file in os.listdir(os.path.dirname(__file__)):
     if file.endswith('.py') and not file.startswith('_'):
         module_name = file[:file.find('.py')]
-        module = importlib.import_module('seal.data.' + module_name)    
+        module = importlib.import_module('seal.task.' + module_name)    

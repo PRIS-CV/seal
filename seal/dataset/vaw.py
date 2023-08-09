@@ -12,6 +12,7 @@ from seal.dataset.utils import *
 
 @dataset("VAWInstanceLevelDataset")
 class VAWInstanceLevelDataset(ALDataset):
+    
     def __init__(self, image_path, anno_path, mode, transform=None, *args, **kwargs):
         
         super().__init__()

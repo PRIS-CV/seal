@@ -1,1 +1,1 @@
-from .configuration import build_config
+from .configuration import build_config, BaseConfig
