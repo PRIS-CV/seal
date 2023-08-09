@@ -7,9 +7,9 @@ SEAL is a PyTorch-based attribute learning package designed to facilitate the de
 
 ## Attribute Learning Models
 
-| Model Name                                | Paper                                                                 | Status    |
+| Model Name                                | Project                                                                 | Status    |
 |-------------------------------------------|-----------------------------------------------------------------------|-----------|    
-| Vision-language Guided Selective Loss     | [Vision-Language Assisted Attribute Learning]()                       |           |
+| Vision-language Guided Selective Loss     | [Vision-Language Assisted Attribute Learning](projects/gsl/README.md)                       |           |
 | Knowledge Enhanced Selective Loss         | [Attribute Learning with Knowledge Enhanced Partial Annotations]()    |           |
 | Object-specific Attribute Relation Net    | [Hierarchical Visual Attribute Learning in the Wild]()                |           |
 
