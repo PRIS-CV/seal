@@ -1,0 +1,9 @@
+{   
+    "name": "vaw_train",
+    "type": "train config",    
+    "settings": {
+        "amp": true,
+        "batch_size": 64,
+        "epochs": 12
+    }
+}

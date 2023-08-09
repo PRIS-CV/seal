@@ -1,0 +1,32 @@
+{   
+    "name": "VAWInstanceLevelDataset", 
+    "type": "dataset config",
+    "settings": {
+        
+        "anno_path": "data/VAW/data-kn-32",
+        "image_path": "/mnt/sdb/data/wangxinran/dataset/VG",
+
+        "trainloader": {
+            "num_workers": 8,
+            "pin_memory": true,
+            "drop_last": true,
+            "shuffle": true
+        },
+        
+        "valloader": {
+            "num_workers": 8,
+            "pin_memory": false,
+            "drop_last": false,
+            "shuffle": false
+        },
+
+        "testloader": {
+            "num_workers": 8,
+            "pin_memory": false,
+            "drop_last": false,
+            "shuffle": false
+        }
+    }
+
+    
+}

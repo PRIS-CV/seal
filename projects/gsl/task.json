@@ -1,0 +1,9 @@
+{
+    "name": "InstanceAttributeRecognitionTask",
+    "type": "task config", 
+    "settings": {
+        "device": 0, 
+        "d_weight": "",
+        "training": true
+    }
+}

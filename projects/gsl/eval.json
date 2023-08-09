@@ -1,0 +1,13 @@
+{   
+    "name": "vaw_eval",
+    "type": "eval config",
+    "settings": {
+        "batch_size": 64,
+        "evaluator": {
+            "fpath_attr2idx": "data/VAW/data-kn-32/attribute_index.json",
+            "fpath_attr_type": "data/VAW/data-kn-32/attribute_types.json",
+            "fpath_attr_parent_type": "data/VAW/data-kn-32/attribute_parent_types.json",
+            "fpath_attr_headtail": "data/VAW/data-kn-32/head_tail.json"
+        }
+    }
+}
