@@ -1,9 +1,10 @@
 {
     "name": "InstanceAttributeRecognitionTask",
+    "project": "gsl",
     "type": "task config", 
     "settings": {
-        "device": 0, 
-        "d_weight": "",
+        "device": 3, 
+        "d_weight": "projects/gsl",
         "training": true
     }
 }

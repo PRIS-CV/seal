@@ -1,5 +1,5 @@
 {   
-    "name": "vaw_eval",
+    "name": "vaw_eval_util",
     "type": "eval config",
     "settings": {
         "batch_size": 64,

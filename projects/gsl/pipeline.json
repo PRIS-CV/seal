@@ -3,9 +3,6 @@
     "type": "pipeline config", 
     "settings": {
         "expand_ratio": 0.3,
-        "input_size": 256, 
-        "crop_size": 224, 
-        "train": 64,
-        "eval": 12
+        "input_size": 224
     }
 }
