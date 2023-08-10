@@ -36,8 +36,12 @@ class InstanceAttributeRecognitionTask(BaseTask):
 
             self.trainset = build_dataset(self.dataset_setting.name)(
                 mode='train', transform=self.train_transforms, **self.dataset_setting.get_settings())
+            
             self.valset = build_dataset(self.dataset_setting.name)(
                 mode="val", transform=self.evalu_transforms, **self.dataset_setting.get_settings())
+            
+            self.testset = build_dataset(self.dataset_setting.name)(
+                mode="test", transform=self.evalu_transforms, **self.dataset_setting.get_settings())
 
             try:
                 collate_fn = self.trainset.collate_fn
@@ -70,11 +74,21 @@ class InstanceAttributeRecognitionTask(BaseTask):
             
             self.valloader = DataLoader(**valloader_settings)
 
+            testloader_settings = self.dataset_setting.get_settings()["testloader"]
+            
+            testloader_settings.update({
+                "dataset":self.testset, 
+                "batch_size": batch_size, 
+                "collate_fn": collate_fn
+            })
+            
+            self.testloader = DataLoader(**testloader_settings)
+
         else:
 
-            batch_size = self.eval_settings["batch_size"]
+            batch_size = self.eval_settings.get_settings()["batch_size"]
 
-            self.evalu_transforms = build_pipeline(self.pipeline.name)(mode="evalu", **self.pipeline_setting.get_settings())
+            self.evalu_transforms = build_pipeline(self.pipeline_setting.name)(mode="evalu", **self.pipeline_setting.get_settings())
             
             self.testset = build_dataset(self.dataset_setting.name)(
                 mode="test", transform=self.evalu_transforms, **self.dataset_setting.get_settings())
@@ -106,7 +120,6 @@ class InstanceAttributeRecognitionTask(BaseTask):
         scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=2, factor=0.1, threshold=0)
         
         highest_mAP = 0.
-    
         
         for epoch in range(self.train_settings.get_settings()["epochs"]):
             self.train_util(self.model, self.trainloader, optimizer, epoch, self.train_settings.get_settings()["epochs"], self.device, amp=self.train_settings.get_settings()["amp"])
@@ -148,9 +161,9 @@ class InstanceAttributeRecognitionTask(BaseTask):
         except:
             print("Cannot find the weight! Using Initialized Weight")
             
-        print("Testing the model of highest validation mAP.")
-        evaluator = VAWEvaluator()    
-        test_mAP_score = self.eval_util(self.model, self.testloader, evaluator, self.device)
+        print("Testing the model of highest validation mAP.")  
+        
+        test_mAP_score = self.eval_util(self.model, self.testloader, self.evaluator, self.device)
         print(f"\n\n Test mAP: {test_mAP_score: 4f}")
 
 
