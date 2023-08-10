@@ -133,4 +133,5 @@ dmypy.json
 
 # wandb package
 wandb/
+*.pth
 
