@@ -5,12 +5,13 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
-from ..configuration import build_config, BaseConfig
+from ..configuration import build_config, BaseConfig, TASK_CONFIG_TYPE
 
 
 class BaseTask(object):
 
     name: str = "Base Task"
+    project: str = "Example Project"
     
     def __init__(self, d_config: str) -> None:
         
@@ -20,7 +21,6 @@ class BaseTask(object):
         self.initialize_device(self.task_settings.get_settings()["device"])
         self.prepare()
         
-    
     def initialize_device(self, device):
         
         self.device = torch.device(f"cuda:{device}" if torch.cuda.is_available() else "cpu")
@@ -32,15 +32,17 @@ class BaseTask(object):
                 with open(os.path.join(self.d_config, file), "r") as f:
                     content = json.load(f)
                 config_type = content["type"]
+                if config_type == TASK_CONFIG_TYPE:
+                    self.project = content["project"]
                 config = build_config(config_type)(content["name"], content["settings"])
                 self._task_config[config_type] = config
 
-        self.task_settings = self.get_settings("task config")
-        self.pipeline_setting = self.get_settings("pipeline config")
-        self.dataset_setting = self.get_settings("dataset config")
-        self.model_setting = self.get_settings("model config")
-        self.train_settings = self.get_settings("train config")
-        self.eval_settings = self.get_settings("eval config")
+        self.task_settings = self.get_config("task config")
+        self.pipeline_setting = self.get_config("pipeline config")
+        self.dataset_setting = self.get_config("dataset config")
+        self.model_setting = self.get_config("model config")
+        self.train_settings = self.get_config("train config")
+        self.eval_settings = self.get_config("eval config")
 
     def setup_data_parallel(rank, world_size):
         # Set up distributed data parallel (DDP) training
@@ -54,7 +56,7 @@ class BaseTask(object):
         # Clean up distributed data parallel (DDP) training
         dist.destroy_process_group()
 
-    def get_settings(self, config_type) -> BaseConfig:
+    def get_config(self, config_type) -> BaseConfig:
         return self._task_config[config_type]
                     
     def save_configs(self):

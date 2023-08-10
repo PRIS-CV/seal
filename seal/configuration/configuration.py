@@ -73,7 +73,7 @@ class TaskConfig(BaseConfig):
     type: str = TASK_CONFIG_TYPE
 
 
-_CONFIG_TYPES = {
+CONFIG_TYPES = {
     BASE_CONFIG_TYPE: BaseConfig,
     DATASET_CONFIG_TYPE: DatasetConfig,
     MODEL_CONFIG_TYPE: ModelConfig,
@@ -85,6 +85,6 @@ _CONFIG_TYPES = {
 
 
 def build_config(config_type: str) -> BaseConfig:
-    if config_type not in _CONFIG_TYPES:
+    if config_type not in CONFIG_TYPES:
         raise ValueError(f"Unknown config type: {config_type}")
-    return _CONFIG_TYPES[config_type]
+    return CONFIG_TYPES[config_type]

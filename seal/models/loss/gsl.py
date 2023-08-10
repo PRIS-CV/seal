@@ -10,26 +10,32 @@ from IPython import embed
 class GuidedSelectiveLoss(Loss):
 
     def __init__(
-        self, 
-        cfg,
-        clip=0.05
+            self, 
+            gamma_pos, gamma_neg, gamma_unl, gamma_can,
+            alpha_pos, alpha_neg, alpha_unl, alpha_can,
+            partial_loss_mode,
+            likelihood_topk=5,
+            prior_threshold=0.5,
+            prior_path=None,
+            clip=0.05,
+            **kwargs
     ):
         super().__init__("gsl")
         self.clip = clip
-        self.gamma_pos = cfg.gamma_pos
-        self.gamma_neg = cfg.gamma_neg
-        self.gamma_unl = cfg.gamma_unl
-        self.gamma_can = cfg.gamma_can
+        self.gamma_pos = gamma_pos
+        self.gamma_neg = gamma_neg
+        self.gamma_unl = gamma_unl
+        self.gamma_can = gamma_can
 
-        self.alpha_pos = cfg.alpha_pos
-        self.alpha_neg = cfg.alpha_neg
-        self.alpha_unl = cfg.alpha_unl
-        self.alpha_can = cfg.alpha_can
+        self.alpha_pos = alpha_pos
+        self.alpha_neg = alpha_neg
+        self.alpha_unl = alpha_unl
+        self.alpha_can = alpha_can
 
-        self.prior_path = cfg.prior_path
-        self.partial_loss_mode = cfg.partial_loss_mode
-        self.likelihood_topk = cfg.likelihood_topk
-        self.prior_threshold = cfg.prior_threshold
+        self.prior_path = prior_path
+        self.partial_loss_mode = partial_loss_mode
+        self.likelihood_topk = likelihood_topk
+        self.prior_threshold = prior_threshold
         self.targets_weights = None
 
         if self.partial_loss_mode == 'selective' and self.prior_path is not None:

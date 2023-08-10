@@ -15,7 +15,7 @@ from seal.config import ConfigPlaceHolder
 
 
 @train_util("train_one_epoch")
-def train_one_epoch(model, dataloader, optimizer, epoch, epoch_num, device, amp=True, use_wandb=True):
+def train_one_epoch(model, dataloader, optimizer, epoch, epoch_num, device, amp=True, use_wandb=False):
     if amp:
         scaler = GradScaler()
     pbar = tqdm(dataloader)

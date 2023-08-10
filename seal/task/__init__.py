@@ -6,7 +6,10 @@ from .task import BaseTask
 __TASK_DICT__ = {}
 
 
-
+def build_task(task_name: str) -> BaseTask:
+    if task_name not in __TASK_DICT__:
+        raise ValueError("Task type %s not registered!" % task_name)
+    return __TASK_DICT__[task_name]
 
 def task(name):
     

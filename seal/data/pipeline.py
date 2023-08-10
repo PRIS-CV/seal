@@ -8,22 +8,22 @@ from torch import Tensor
 @pipeline("VAWInstancePipeline")
 class VAWInstancePipeline(Pipeline):
     
-    def __init__(self, cfg, mode):
+    def __init__(self, mode, expand_ratio, input_size, **kwargs):
         
         if mode == "train":
             transforms = {
-                "ExpandBox": {"expand_ratio": 0.3}, 
+                "ExpandBox": {"expand_ratio": expand_ratio}, 
                 "CropInstance": {}, 
-                "Resize": {"w": cfg.input_size, "h": cfg.input_size}, 
+                "Resize": {"w": input_size, "h": input_size}, 
                 "ToTensor": {},
                 "Normalize": {},
                 "RandomHorizontalFlip": {}
             }
         else:
             transforms = {
-                "ExpandBox": {"expand_ratio": 0.3}, 
+                "ExpandBox": {"expand_ratio": expand_ratio}, 
                 "CropInstance": {},
-                "Resize": {"w": cfg.input_size, "h": cfg.input_size}, 
+                "Resize": {"w": input_size, "h": input_size}, 
                 "ToTensor": {},
                 "Normalize": {},
             }
