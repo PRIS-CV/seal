@@ -1,5 +1,5 @@
 {   
-    "name": "VAWInstancePipeline",
+    "name": "GSLInstancePipeline",
     "type": "pipeline config", 
     "settings": {
         "expand_ratio": 0.3,
