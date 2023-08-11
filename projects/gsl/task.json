@@ -4,7 +4,6 @@
     "type": "task config", 
     "settings": {
         "device": 3, 
-        "d_weight": "projects/gsl",
-        "training": true
+        "d_weight": "projects/gsl"
     }
 }

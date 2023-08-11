@@ -8,10 +8,10 @@ SEAL is a PyTorch-based attribute learning package designed to facilitate the de
 ## Attribute Learning Models
 
 | Model Name                                | Project                                                                 | Status    |
-|-------------------------------------------|-----------------------------------------------------------------------|-----------|    
-| Vision-language Guided Selective Loss     | [Vision-Language Assisted Attribute Learning](projects/gsl/README.md)                       |           |
-| Knowledge Enhanced Selective Loss         | [Attribute Learning with Knowledge Enhanced Partial Annotations](projects/kesl/README.md)    |           |
-| Object-specific Attribute Relation Net    | [Hierarchical Visual Attribute Learning in the Wild](projects/osarn/README.md)                |           |
+|-------------------------------------------|-----------------------------------------------------------------------|:---------:|    
+| Vision-language Guided Selective Loss     | [Vision-Language Assisted Attribute Learning](projects/gsl/README.md)                       | ✅          |
+| Knowledge Enhanced Selective Loss         | [Attribute Learning with Knowledge Enhanced Partial Annotations](projects/kesl/README.md)    | 🏗️           |
+| Object-specific Attribute Relation Net    | [Hierarchical Visual Attribute Learning in the Wild](projects/osarn/README.md)                | 🏗️         |
 
 ## Installation 
 
@@ -31,7 +31,9 @@ pip install -e .
 
 ## Docs and Tutorial 📚
 
+🏗️
 
+## Download
 
 ### Download VAW and VG Dataset
 Download VAW dataset at https://github.com/adobe-research/vaw_dataset
@@ -45,16 +47,16 @@ You need to download relevant word embeddings at [Google Drive](https://drive.go
 Use `clean.ipynb` in `notebook/` to clean the original VAW dataset to get cleaned VAW dataset.
 
 
-### Run
+### A Demo of Running a Project
 
-Train
-```
-sh train.sh
-```
+Before running you should check the modular json settings in a project's directory, e.g., `projects/gsl`:
 
-Test
-```
-sh test.sh
+```bash
+
+python main.py --project projects/gsl --mode train
+
+python main.py --project projects/gsl --mode test
+
 ```
 
 ## Citation

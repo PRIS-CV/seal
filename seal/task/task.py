@@ -13,9 +13,10 @@ class BaseTask(object):
     name: str = "Base Task"
     project: str = "Example Project"
     
-    def __init__(self, d_config: str) -> None:
+    def __init__(self, d_config: str, mode: str) -> None:
         
         self.d_config = d_config
+        self.mode = mode
         self._task_config = {}
         self.initialize_configs()
         self.initialize_device(self.task_settings.get_settings()["device"])

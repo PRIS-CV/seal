@@ -20,13 +20,16 @@ class InstanceAttributeRecognitionTask(BaseTask):
     
     def prepare(self):
         
+        if self.mode not in ["train", "test"]:
+            raise ValueError("The InstanceAttributeRecognitionTask's mode must be train or eval")
+        
         self.model = build_model(self.model_setting.name)(**self.model_setting.get_settings()).to(self.device)
         self.evaluator = VAWEvaluator(**self.eval_settings.get_settings()['evaluator'])
         self.d_weight = self.task_settings.get_settings()['d_weight']
         self.train_util = build_train_util(self.train_settings.name)
         self.eval_util = build_eval_util(self.eval_settings.name)
 
-        if self.task_settings.get_settings()["training"]:
+        if self.mode == "train":
             
             self.train_transforms = build_pipeline(self.pipeline_setting.name)(
                 mode="train", **self.pipeline_setting.get_settings())
@@ -168,7 +171,7 @@ class InstanceAttributeRecognitionTask(BaseTask):
 
 
     def run(self):
-        if self.task_settings.get_settings()['training']:
+        if self.mode == "train":
             self.train()
         else:
             self.eval()
