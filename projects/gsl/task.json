@@ -3,7 +3,7 @@
     "project": "gsl",
     "type": "task config", 
     "settings": {
-        "device": 3, 
+        "device": 1, 
         "d_weight": "projects/gsl"
     }
 }

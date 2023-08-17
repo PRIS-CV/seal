@@ -11,3 +11,9 @@ Qualitative evaluation demonstrates the ability of the proposed method in predic
 
 ## Prediction Visualization
 ![Fig4](gsl_fig4.png)
+
+
+## Running Project
+
+### Preparation
+Use `clean.ipynb` in `notebook/` to clean the original VAW dataset to get cleaned VAW dataset.
