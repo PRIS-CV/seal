@@ -6,8 +6,8 @@ from torch.optim import lr_scheduler
 from ..dataset import build_dataset
 from ..data import build_pipeline
 from ..models import build_model
-from ..utils import build_train_util, build_eval_util
-from ..utils.evaluators import VAWEvaluator
+from ..evaluation import build_evaluation
+from ..utils import build_train_util
 from . import task
 from .task import BaseTask
 
@@ -24,10 +24,9 @@ class InstanceAttributeRecognitionTask(BaseTask):
             raise ValueError("The InstanceAttributeRecognitionTask's mode must be train or eval")
         
         self.model = build_model(self.model_setting.name)(**self.model_setting.get_settings()).to(self.device)
-        self.evaluator = VAWEvaluator(**self.eval_settings.get_settings()['evaluator'])
+        self.evaluation = build_evaluation(self.eval_settings.name)(**self.eval_settings.get_settings())
         self.d_weight = self.task_settings.get_settings()['d_weight']
         self.train_util = build_train_util(self.train_settings.name)
-        self.eval_util = build_eval_util(self.eval_settings.name)
 
         if self.mode == "train":
             
@@ -118,15 +117,16 @@ class InstanceAttributeRecognitionTask(BaseTask):
 
     def train(self):
 
-        optimizer = self.model.get_optimizer(show_detail=False)
+        optimizer = self.model.get_optimizer()
 
-        scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=2, factor=0.1, threshold=0)
+        scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=0, factor=0.1, threshold=0)
         
         highest_mAP = 0.
         
         for epoch in range(self.train_settings.get_settings()["epochs"]):
             self.train_util(self.model, self.trainloader, optimizer, epoch, self.train_settings.get_settings()["epochs"], self.device, amp=self.train_settings.get_settings()["amp"])
-            mAP = self.eval_util(self.model, self.valloader, self.evaluator, self.device)
+            self.evaluation(model=self.model, dataloader=self.valloader)
+            mAP = self.evaluation.get_mAP()
             res_dict = {"validation_mAP": mAP, "epoch": epoch}
             scheduler.step(res_dict["validation_mAP"])
 
@@ -144,7 +144,7 @@ class InstanceAttributeRecognitionTask(BaseTask):
         weight_name = self.project + "-model-highest.pth"
         state_dict = torch.load(op.join(self.d_weight, weight_name), map_location=self.device)
         self.model.load_state_dict(state_dict)
-        mAP = self.eval_util(self.model, self.testloader, self.evaluator, self.device)
+        self.evaluation(model=self.model, dataloader=self.testloader)
         res_dict = {"test_mAP": mAP}
         print("Finish Test")
         print(res_dict)
@@ -166,8 +166,8 @@ class InstanceAttributeRecognitionTask(BaseTask):
             
         print("Testing the model of highest validation mAP.")  
         
-        test_mAP_score = self.eval_util(self.model, self.testloader, self.evaluator, self.device)
-        print(f"\n\n Test mAP: {test_mAP_score: 4f}")
+        self.evaluation(self.testloader, self.model)
+        
 
 
     def run(self):
