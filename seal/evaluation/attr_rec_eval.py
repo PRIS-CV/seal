@@ -46,6 +46,7 @@ class AttributeRecoginitionEvaluation(Evaluation):
         for metric in self.metrics:
             metric.calculate_metric()
             self._result.update(metric.get_result())
+            metric.reset()
         
         self.print_result()
         self.save_result()
