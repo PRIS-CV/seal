@@ -25,3 +25,10 @@ Qualitative evaluation demonstrates the ability of the proposed method in predic
 
 ## Running
 
+```bash
+
+python main.py --project projects/gsl --mode train
+
+python main.py --project projects/gsl --mode test
+
+```
