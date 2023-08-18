@@ -13,7 +13,15 @@ Qualitative evaluation demonstrates the ability of the proposed method in predic
 ![Fig4](gsl_fig4.png)
 
 
-## Running Project
+## Preparation
 
-### Preparation
-Use `clean.ipynb` in `notebook/` to clean the original VAW dataset to get cleaned VAW dataset.
+
+1. Download [VAW dataset](https://github.com/adobe-research/vaw_dataset) and [VG 1.4 dataset](https://visualgenome.org/).
+
+2. Download relevant word embeddings at [Google Drive](https://drive.google.com/drive/folders/18M4F7vA0EOZqlp88E4W9gatQUTcSHYd6?usp=sharing), and put it under `data/embeddings/`.
+
+3. Use `clean.ipynb` in `notebook/` to clean the original VAW dataset to get cleaned VAW dataset.
+
+
+## Running
+
