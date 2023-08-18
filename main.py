@@ -19,4 +19,3 @@ if __name__ == "__main__":
     
     task = build_task(task_name)(d_config=args.project, mode=args.mode)
     task.run()
-

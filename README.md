@@ -33,23 +33,10 @@ pip install -e .
 
 🏗️
 
-## Download
 
-### Download VAW and VG Dataset
-Download VAW dataset at https://github.com/adobe-research/vaw_dataset
+## Running
 
-Download VG v1.4 dataset at https://visualgenome.org/
-
-### Download Word-embedding
-You need to download relevant word embeddings at [Google Drive](https://drive.google.com/drive/folders/18M4F7vA0EOZqlp88E4W9gatQUTcSHYd6?usp=sharing), and put it under `data/embeddings/`.
-
-### Clean The VAW Dataset
-Use `clean.ipynb` in `notebook/` to clean the original VAW dataset to get cleaned VAW dataset.
-
-
-### A Demo of Running a Project
-
-Before running you should check the modular json settings in a project's directory, e.g., `projects/gsl`:
+Before running you should check the modular json settings in a project's directory, e.g., `projects/gsl` and see the running instruction in each project's README file:
 
 ```bash
 
