@@ -45,7 +45,7 @@ class VAWInstancePipeline(Pipeline):
                 "CropInstance": {}, 
                 "Resize": {"w": input_size, "h": input_size}, 
                 "ToTensor": {},
-                # "Normalize": {},
+                "Normalize": {},
                 "RandomHorizontalFlip": {}
             }
         else:
@@ -54,7 +54,7 @@ class VAWInstancePipeline(Pipeline):
                 "CropInstance": {},
                 "Resize": {"w": input_size, "h": input_size}, 
                 "ToTensor": {},
-                # "Normalize": {},
+                "Normalize": {},
             }
         
         transforms = [build_transform(name)(**args) for name, args in transforms.items()]
