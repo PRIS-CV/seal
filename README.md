@@ -33,6 +33,9 @@ pip install -e .
 
 ## Docs and Tutorial 📚
 
+A brief [architecture overview](seal/README.md) assists users in quickly grasping the structure of SEAL.
+
+
 🏗️
 
 
