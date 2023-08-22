@@ -12,7 +12,6 @@ __MODEL_CONFIG_DICT__ = {}
 
 
 def build_model(name):
-    print(__MODEL_DICT__)
     return __MODEL_DICT__[name]
 
 def build_model_config(name):

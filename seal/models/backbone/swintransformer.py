@@ -536,10 +536,15 @@ class SwinTransformer(nn.Module):
             self.layers.append(layer)
 
         self.norm = norm_layer(self.num_features)
-        self.avgpool = nn.AdaptiveAvgPool1d(1)
+        self.avgpool = nn.AdaptiveAvgPool2d(1)
         self.head = nn.Linear(self.num_features, num_classes) if num_classes > 0 else nn.Identity()
 
         self.apply(self._init_weights)
+
+        # for reshape
+        self.img_size = img_size
+        self.down_sample_ratio = 32
+        self.h = img_size // 32
 
     def _init_weights(self, m):
         if isinstance(m, nn.Linear):
@@ -568,15 +573,16 @@ class SwinTransformer(nn.Module):
             x = layer(x)
 
         x = self.norm(x)  # B L C
-        # x = self.avgpool(x.transpose(1, 2))  # B C 1
-        # x = torch.flatten(x, 1)
+        B,L,C = x.shape
+        x = x.transpose(1,2).reshape(B, C, self.h , self.h)
         return x
 
     def forward(self, x):
-        x = self.forward_features(x) #[bsz, 49, 1024]
-        attention_mask = (torch.sum(x, -1) == 0).unsqueeze(1).unsqueeze(1)  # (b_s, 1, 1, seq_len)
-        # x = self.head(x)
-        return x, attention_mask
+        x = self.forward_features(x)
+        x = self.avgpool(x).squeeze(-1).squeeze(-1)  # B C 1
+        # import ipdb; ipdb.set_trace()
+        x = self.head(x)
+        return x
 
     def flops(self):
         flops = 0
@@ -589,7 +595,7 @@ class SwinTransformer(nn.Module):
 
 
 @backbone("swin_base_patch4_window7_224_22k")
-def swin_base_patch4_window7_224_22k(cfg):
+def swin_base_patch4_window7_224_22k(pretrained, pretrained_weight, **kwargs):
     r"""Swin Transformer pretrained weight download link: 
         https://github.com/SwinTransformer/storage/releases/download/v1.0.0/swin_base_patch4_window7_224_22k.pth
     """
@@ -613,9 +619,9 @@ def swin_base_patch4_window7_224_22k(cfg):
         use_checkpoint=False
     )
 
-    if cfg.pretrained:
+    if pretrained:
         print("Loading pretrained weight ...")
-        state_dict = torch.load(cfg.pretrained_weight, map_location="cpu")['model']
+        state_dict = torch.load(pretrained_weight, map_location="cpu")['model']
         missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False)
         print(f"Missing keys: {missing_keys}")
         print(f"Unexpected keys: {unexpected_keys}")
@@ -624,7 +630,7 @@ def swin_base_patch4_window7_224_22k(cfg):
 
 
 @backbone("swin_large_patch4_window12_384_22k")
-def swin_large_patch4_window12_384_22k(cfg):
+def swin_large_patch4_window12_384_22k(pretrained, pretrained_weight, **kwargs):
     r"""Swin Transformer pretrained weight download link: 
         https://github.com/SwinTransformer/storage/releases/download/v1.0.0/swin_large_patch4_window7_224_22k.pth
     """
@@ -647,9 +653,9 @@ def swin_large_patch4_window12_384_22k(cfg):
         use_checkpoint=False
     )
                         
-    if cfg.pretrained:
+    if pretrained:
         print("Loading pretrained weight ...")
-        state_dict = torch.load(cfg.pretrained_weight, map_location="cpu")['model']
+        state_dict = torch.load(pretrained_weight, map_location="cpu")['model']
         missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False)
         print(f"Missing keys: {missing_keys}")
         print(f"Unexpected keys: {unexpected_keys}")
@@ -658,7 +664,7 @@ def swin_large_patch4_window12_384_22k(cfg):
 
 
 @backbone("swin_base_patch4_window12_384_22k")
-def swin_base_patch4_window12_384_22k(cfg):
+def swin_base_patch4_window12_384_22k(pretrained, pretrained_weight, **kwargs):
 
     model = SwinTransformer(
         img_size=384,
@@ -678,9 +684,9 @@ def swin_base_patch4_window12_384_22k(cfg):
         use_checkpoint=False
     )
     
-    if cfg.pretrained:
+    if pretrained:
         print("Loading pretrained weight ...")
-        state_dict = torch.load(cfg.pretrained_weight, map_location="cpu")['model']
+        state_dict = torch.load(pretrained_weight, map_location="cpu")['model']
         missing_keys, unexpected_keys = model.load_state_dict(state_dict, strict=False)
         print(f"Missing keys: {missing_keys}")
         print(f"Unexpected keys: {unexpected_keys}")

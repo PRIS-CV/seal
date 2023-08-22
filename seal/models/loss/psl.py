@@ -11,22 +11,29 @@ class PartialSelectiveLoss(Loss):
 
     def __init__(
         self, 
-        cfg,
-        clip=0.05
+        gamma_pos, gamma_neg, gamma_unl,
+        alpha_pos, alpha_neg, alpha_unl,
+        partial_loss_mode = 'selective',
+        prior_path = None,
+        likelihood_topk = 5,
+        prior_threshold = 0.5,
+        targets_weights = None,
+        clip=0.05,
+        **kwargs
     ):
         super().__init__("psl")
         self.clip = clip
-        self.gamma_pos = cfg.gamma_pos
-        self.gamma_neg = cfg.gamma_neg
-        self.gamma_unl = cfg.gamma_unl
-        self.alpha_pos = cfg.alpha_pos
-        self.alpha_neg = cfg.alpha_neg
-        self.alpha_unl = cfg.alpha_unl
-        self.prior_path = cfg.prior_path
-        self.partial_loss_mode = cfg.partial_loss_mode
-        self.likelihood_topk = cfg.likelihood_topk
-        self.prior_threshold = cfg.prior_threshold
-        self.targets_weights = None
+        self.gamma_pos = gamma_pos
+        self.gamma_neg = gamma_neg
+        self.gamma_unl = gamma_unl
+        self.alpha_pos = alpha_pos
+        self.alpha_neg = alpha_neg
+        self.alpha_unl = alpha_unl
+        self.prior_path =prior_path
+        self.partial_loss_mode = partial_loss_mode
+        self.likelihood_topk = likelihood_topk
+        self.prior_threshold = prior_threshold
+        self.targets_weights = targets_weights
 
         if self.partial_loss_mode == 'selective' and self.prior_path is not None:
             print("Prior file was found in given path.")
