@@ -48,8 +48,8 @@ class HierarchicalAttributeRecoginitionEvaluation(Evaluation):
         super().__init__(directory)
     
     def build_metrics(self):
-        self.metrics = [MaskedmAP(name="mAP")]
-        # self.metrics = [ConstraintViolation(name='CV', adjacency_matrix=self.hierarchy), MaskedCmAP(name='cmAP', adjacency_matrix=self.hierarchy)]
+        # self.metrics = [MaskedmAP(name="mAP")]
+        self.metrics = [ConstraintViolation(name='CV', adjacency_matrix=self.hierarchy), MaskedCmAP(name='cmAP', adjacency_matrix=self.hierarchy)]
 
     def reset_metrics(self):
         for m in self.metrics:
