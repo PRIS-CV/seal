@@ -47,7 +47,7 @@ If our work inspired you or help you, please consider citing it:
 @InProceedings{liang2023hierarchical,
   title={Hierarchical Visual Attribute Learning in the Wild},
   author={Liang, Kongming and Wang, Xinran and Zhang, Haiwen and Ma, Zhanyu and Guo, Jun},
-  booktitle = {Proceedings of the ACM International Conference on Multimedia},
+  booktitle = {ACM International Conference on Multimedia},
   year={2023}
 }
 ```
