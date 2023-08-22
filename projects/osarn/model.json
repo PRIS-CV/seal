@@ -1,0 +1,60 @@
+{   
+    "name": "ObjectSpcAttRelNet",
+    "type": "model config",
+    "settings": {
+        "keep_input_proj": false,
+        "num_classes": 673,
+        "f_attr_embs": "data/embeddings/hvaw_clip_attr_embs_d512.pth", 
+        "f_obj_embs": "data/embeddings/hvaw_clip_obj_embs_d512.pth",  
+        "obj_spc": true,
+        "backbone": {
+            "name": "swin_base_patch4_window7_224_22k",
+            "img_size": 224,
+            "hidden_dim": 2048,
+            "position_embedding": "sine",
+            "pretrained": true,
+            "pretrained_weight": "/data/wangxinran/weight/pretraining/swintransformer/swin_base_patch4_window7_224_22k.pth"
+        },
+        "rem": {
+            "n_type": 3,
+            "hir_adj": "data/HVAW/data/hmat.npy",
+            "pos_adj": "data/HVAW/data/improve_cooc_mat.npy",
+            "neg_adj": "data/HVAW/data/impress_cooc_mat.npy",
+            "att_num": "data/HVAW/data/attribute_num_mat.npy",
+            "pos_threshold": 0.8,
+            "neg_threshold": 0.2,
+            "exclusive_hir": true
+        },
+        
+        "transformer": {
+            "enc_layers": 1,
+            "dec_layers": 2,
+            "hidden_dim": 2048,
+            "dim_feedforward": 2048,
+            "nheads": 4,
+            "keep_other_self_attn_dec": false,
+            "keep_first_self_attn_dec": false,
+            "dropout": 0.1,
+            "pre_norm": false
+        },
+        
+        "optimizer": {
+            "fast_lr": 7e-5,
+            "base_lr": 1e-5,
+            "weight_decay": 1e-4
+        },
+        
+        "loss": {
+            "name": "PartialSelectiveLoss", 
+            "gamma_pos": 0,
+            "gamma_neg": 0,
+            "gamma_unl": 4,
+            "alpha_pos": 1,
+            "alpha_neg": 1,
+            "alpha_unl": 1,
+            "partial_loss_mode": "negative",
+            "likelihood_topk": 0,
+            "prior_threshold": 0
+        }
+    }
+}

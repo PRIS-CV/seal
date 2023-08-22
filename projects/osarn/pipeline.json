@@ -1,0 +1,8 @@
+{   
+    "name": "VAWInstancePipeline",
+    "type": "pipeline config", 
+    "settings": {
+        "expand_ratio": 0.3,
+        "input_size": 224
+    }
+}

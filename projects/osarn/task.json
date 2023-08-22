@@ -1,0 +1,9 @@
+{
+    "name": "InstanceAttributeRecognitionTask",
+    "project": "osarn",
+    "type": "task config", 
+    "settings": {
+        "device": 1, 
+        "d_weight": "projects/osarn"
+    }
+}
