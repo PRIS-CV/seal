@@ -33,10 +33,12 @@ class GSLInstancePipeline(Pipeline):
         return super().__call__(image, bboxes, mask)
 
 
-
 @pipeline("VAWInstancePipeline")
 class VAWInstancePipeline(Pipeline):
-    
+
+    name: str = "VAWInstancePipeline"
+    mode_choice: list = ["train", "evalu", "visua"]
+
     def __init__(self, mode, expand_ratio, input_size, **kwargs):
         
         if mode == "train":
@@ -48,7 +50,7 @@ class VAWInstancePipeline(Pipeline):
                 "Normalize": {},
                 "RandomHorizontalFlip": {}
             }
-        else:
+        elif mode == "evalu":
             transforms = {
                 "ExpandBox": {"expand_ratio": expand_ratio}, 
                 "CropInstance": {},
@@ -56,7 +58,15 @@ class VAWInstancePipeline(Pipeline):
                 "ToTensor": {},
                 "Normalize": {},
             }
+        elif mode == "visua":
+            transforms = {
+                "ExpandBox": {"expand_ratio": expand_ratio}, 
+                "CropInstance": {},
+            }
         
+        else:
+            raise ValueError(f"{self.name} only supports mode: {self.mode_choice}.")
+
         transforms = [build_transform(name)(**args) for name, args in transforms.items()]
         super().__init__(transforms)
     

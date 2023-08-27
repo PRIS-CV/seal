@@ -84,6 +84,19 @@ class VAWInstanceLevelDataset(ALDataset):
     def __len__(self):
         return len(self.annos)
 
+    def get_image_by_index(self, index, transform=None):
+        anno = self.annos[index]
+        path = op.join(self.image_path, f"{anno['image_id']}.jpg")
+        image = Image.open(path).convert('RGB')
+        bbox = anno['instance_bbox']
+        bbox = xywh_to_xyxy(bbox)
+        bbox = [list(map(int, bbox))]
+
+        if transform is not None:
+            image, bbox, _ = transform(image, bbox, None)
+
+        return image
+
     def __getitem__(self, index):
         
         anno = self.annos[index]

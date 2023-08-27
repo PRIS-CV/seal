@@ -1,14 +1,14 @@
 import json
+import torch.distributed as dist
 from tqdm import tqdm
 from sklearn.metrics import average_precision_score
 
+
 from . import evaluation
 from .utils import *
-from .metric.map import MaskedmAP
+from ..utils.distributed import is_main, get_world_size, get_rank
 from .metric.cmap import MaskedCmAP
 from .metric.cv import ConstraintViolation
-
-
 from .evaluation import Evaluation
 from .attr_rec_eval import SingleClassMetric, GroupClassMetric, top_K_values, average_precision_score
 
@@ -58,6 +58,8 @@ class HierarchicalAttributeRecoginitionEvaluation(Evaluation):
     def __call__(self, dataloader, model):
 
         self.reset_metrics()
+
+        world_size = get_world_size()
         
         model.eval()
 
@@ -68,60 +70,76 @@ class HierarchicalAttributeRecoginitionEvaluation(Evaluation):
         pbar = tqdm(dataloader)
         pbar.set_description(f'Evaluation')
         with torch.no_grad():
-            for i, data in enumerate(pbar):
-                target = data['t']
+            for i, data in enumerate(pbar):                
                 data = load_to_device(data, device)
                 pred = model(data).sigmoid()
-                preds.append(pred.cpu())
-                targets.append(target.cpu())
-                for metric in self.metrics:
-                    metric.update(preds=pred, gt_labels=target)
+                target = data['t']
+                
+                if world_size > 1:
+                    gather_pred = [torch.zeros_like(pred) for _ in range(world_size)]
+                    gather_target = [torch.zeros_like(target) for _ in range(world_size)]
+                    dist.all_gather(gather_pred, pred)
+                    dist.all_gather(gather_target, target)
+                    pred = torch.cat(gather_pred, dim=0)
+                    target = torch.cat(gather_target, dim=0)
+
+                pred = pred.cpu()
+                target = target.cpu()
+
+                preds.append(pred)
+                targets.append(target)
+                
+                if is_main():
+                    for metric in self.metrics:
+                        metric.update(preds=pred, gt_labels=target)
         
-        for metric in self.metrics:
-            metric.calculate_metric()
-            self._result.update(metric.get_result())
+        if is_main():
 
-        preds = torch.cat(preds, dim=0).numpy()
-        targets = torch.cat(targets, dim=0).numpy()
+            for metric in self.metrics:
+                metric.calculate_metric()
+                self._result.update(metric.get_result())
 
-        scores_overall, scores_per_class = self.evaluate(preds, targets)
-        scores_overall_topk, scores_per_class_topk = self.evaluate(preds, targets, threshold_type='topk')
+            preds = torch.cat(preds, dim=0).numpy()
+            targets = torch.cat(targets, dim=0).numpy()
 
-        CATEGORIES = ['all', 'head', 'medium', 'tail']
+            scores_overall, scores_per_class = self.evaluate(preds, targets)
+            scores_overall_topk, scores_per_class_topk = self.evaluate(preds, targets, threshold_type='topk')
 
-        for category in CATEGORIES:
-            
-            category_result = {}
-            category_result.update(mAP=f"{scores_per_class[category]['ap']:.4f}")
-            
-            perclass_result = {}
-            for metric in ['recall', 'precision', 'f1', 'bacc']:
-                if metric in scores_per_class[category]:
-                    perclass_result[metric] = f"{scores_per_class[category][metric]:.4f}"
-            category_result[f"Perclass-th{self.threshold}"] = perclass_result
-            
-            perclass_topk_result = {}
-            for metric in ['recall', 'precision', 'f1']:
-                if metric in scores_per_class_topk[category]:
-                    perclass_topk_result[metric] = f"{scores_per_class_topk[category][metric]:.4f}"
-            category_result[f"Perclass-top15"] = perclass_topk_result
+            CATEGORIES = ['all', 'head', 'medium', 'tail']
 
-            overall_result = {}
-            for metric in ['recall', 'precision', 'f1', 'bacc']:
-                if metric in scores_overall[category]:
-                    overall_result[metric] = f"{scores_overall[category][metric]:.4f}"
-            category_result[f"Overall-th{self.threshold}"] = overall_result
-            
-            overall_topk_result = {}
-            for metric in ['recall', 'precision', 'f1']:
-                if metric in scores_overall_topk[category]:
-                    overall_topk_result[metric] = f"{scores_overall_topk[category][metric]:.4f}"
+            for category in CATEGORIES:
+                
+                category_result = {}
+                category_result.update(mAP=f"{scores_per_class[category]['ap']:.4f}")
+                
+                perclass_result = {}
+                for metric in ['recall', 'precision', 'f1', 'bacc']:
+                    if metric in scores_per_class[category]:
+                        perclass_result[metric] = f"{scores_per_class[category][metric]:.4f}"
+                category_result[f"Perclass-th{self.threshold}"] = perclass_result
+                
+                perclass_topk_result = {}
+                for metric in ['recall', 'precision', 'f1']:
+                    if metric in scores_per_class_topk[category]:
+                        perclass_topk_result[metric] = f"{scores_per_class_topk[category][metric]:.4f}"
+                category_result[f"Perclass-top15"] = perclass_topk_result
 
-            category_result[f"Overall-top15"] = overall_topk_result
-            self._result[category] = category_result
+                overall_result = {}
+                for metric in ['recall', 'precision', 'f1', 'bacc']:
+                    if metric in scores_overall[category]:
+                        overall_result[metric] = f"{scores_overall[category][metric]:.4f}"
+                category_result[f"Overall-th{self.threshold}"] = overall_result
+                
+                overall_topk_result = {}
+                for metric in ['recall', 'precision', 'f1']:
+                    if metric in scores_overall_topk[category]:
+                        overall_topk_result[metric] = f"{scores_overall_topk[category][metric]:.4f}"
 
-        self.print_result()
-        self.save_result()
+                        category_result[f"Overall-top15"] = overall_topk_result
+                        self._result[category] = category_result
+
+            self.print_result()
+            self.save_result()
     
     def get_mAP(self):
         return float(self._result['all']['mAP'])

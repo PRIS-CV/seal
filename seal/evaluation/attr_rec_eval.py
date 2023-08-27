@@ -16,6 +16,7 @@ from .evaluation import Evaluation
 from .utils import *
 from .metric.map import MaskedmAP
 
+
 @evaluation('attribute_recognition_evaluation')
 class AttributeRecoginitionEvaluation(Evaluation):
     
