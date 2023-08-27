@@ -50,9 +50,9 @@ Before running you should check the modular json settings in a project's directo
 
 ```bash
 
-python main.py --project projects/gsl --mode train
+CUDA_VISIBLE_DEVICES=0 python main.py --project projects/gsl --mode train
 
-python main.py --project projects/gsl --mode test
+CUDA_VISIBLE_DEVICES=0 python main.py --project projects/gsl --mode test
 
 ```
 
@@ -61,3 +61,14 @@ python main.py --project projects/gsl --mode test
 If you use SEAL in your research or project, please consider citing the relevant papers.
 
 ---
+
+
+## Star History
+
+<a href="https://star-history.com/#PRIS-CV/seal&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=PRIS-CV/seal&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=PRIS-CV/seal&type=Date" />
+    <div align=center><img alt="Star History Chart" src="https://api.star-history.com/svg?repos=PRIS-CV/seal&type=Date" /></div>
+  </picture>
+</a>
