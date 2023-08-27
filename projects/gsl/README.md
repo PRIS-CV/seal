@@ -27,8 +27,8 @@ Qualitative evaluation demonstrates the ability of the proposed method in predic
 
 ```bash
 
-python main.py --project projects/gsl --mode train
+CUDA_VISIBLE_DEVICES=0 python main.py --project projects/gsl --mode train
 
-python main.py --project projects/gsl --mode test
+CUDA_VISIBLE_DEVICES=0 python main.py --project projects/gsl --mode test
 
 ```

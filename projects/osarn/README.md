@@ -27,10 +27,10 @@ Observing objects' attributes at different levels of detail is a fundamental asp
 
 ```bash
 # train
-python main.py --project projects/osarn --mode train
+CUDA_VISIBLE_DEVICES=0 python main.py --project projects/osarn --mode train
 
 # test
-python main.py --project projects/osarn --mode test
+CUDA_VISIBLE_DEVICES=0 python main.py --project projects/osarn --mode test
 ```
 
 

@@ -3,7 +3,15 @@
     "project": "osarn",
     "type": "task config", 
     "settings": {
-        "device": 1, 
-        "d_weight": "projects/osarn"
+        "backend": "nccl",
+        "device_id": 0,
+        "device": "cuda", 
+        "d_weight": "projects/osarn",
+        "init_method": null,
+        "no_spawn": true,
+        "port": -1,
+        "rank": 0,
+        "type": "data_parallel",
+        "world_size": 1
     }
 }
