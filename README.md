@@ -63,7 +63,7 @@ If you use SEAL in your research or project, please consider citing the relevant
 ---
 
 
-## Star History
+<!-- ## Star History
 
 <a href="https://star-history.com/#PRIS-CV/seal&Date">
   <picture>
@@ -71,4 +71,4 @@ If you use SEAL in your research or project, please consider citing the relevant
     <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=PRIS-CV/seal&type=Date" />
     <div align=center><img alt="Star History Chart" src="https://api.star-history.com/svg?repos=PRIS-CV/seal&type=Date" /></div>
   </picture>
-</a>
+</a> -->
