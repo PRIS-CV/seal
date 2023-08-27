@@ -1,5 +1,6 @@
 import os.path as op
 import torch
+import torch.nn as nn
 from torch.utils.data.dataloader import DataLoader
 from torch.optim import lr_scheduler
 
@@ -7,7 +8,9 @@ from ..dataset import build_dataset
 from ..data import build_pipeline
 from ..models import build_model
 from ..evaluation import build_evaluation
+from .utils import add_extra_kwargs_to_dataloader
 from ..utils import build_train_util
+from ..utils.distributed import is_dist_initialized
 from . import task
 from .task import BaseTask
 
@@ -17,13 +20,18 @@ class InstanceAttributeRecognitionTask(BaseTask):
 
     name: str = "InstanceAttributeRecognitionTask"
     project: str = "InstanceAttributeRecognitionProject"
+    mode_choice: list = ["train", "test"]
     
     def prepare(self):
         
-        if self.mode not in ["train", "test"]:
-            raise ValueError("The InstanceAttributeRecognitionTask's mode must be train or eval")
+        if self.mode not in self.mode_choice:
+            raise ValueError(f"The {self.name}'s mode must be one of following mode: {self.mode_choice}")
         
         self.model = build_model(self.model_setting.name)(**self.model_setting.get_settings()).to(self.device)
+
+        if is_dist_initialized():
+            self.model = nn.parallel.DistributedDataParallel(self.model)
+        
         self.evaluation = build_evaluation(self.eval_settings.name)(**self.eval_settings.get_settings())
         self.d_weight = self.task_settings.get_settings()['d_weight']
         self.train_util = build_train_util(self.train_settings.name)
@@ -45,44 +53,24 @@ class InstanceAttributeRecognitionTask(BaseTask):
             self.testset = build_dataset(self.dataset_setting.name)(
                 mode="test", transform=self.evalu_transforms, **self.dataset_setting.get_settings())
 
-            try:
-                collate_fn = self.trainset.collate_fn
-                print("Using dataset collate function")
-            except:
-                collate_fn = None
-                print("Using dataloader default collate function")
-            finally:
-                pass
-
+            
             batch_size = self.train_settings.get_settings()["batch_size"]
 
             trainloader_settings = self.dataset_setting.get_settings()["trainloader"]            
 
-            trainloader_settings.update({
-                "dataset": self.trainset, 
-                "batch_size": batch_size, 
-                "collate_fn": collate_fn
-            })
+            trainloader_settings = add_extra_kwargs_to_dataloader(trainloader_settings, self.trainset, batch_size)
 
             self.trainloader = DataLoader(**trainloader_settings)
 
             valloader_settings = self.dataset_setting.get_settings()["valloader"]
 
-            valloader_settings.update({
-                "dataset": self.valset, 
-                "batch_size": batch_size, 
-                "collate_fn": collate_fn
-            })
-            
+            valloader_settings = add_extra_kwargs_to_dataloader(valloader_settings, self.valset, batch_size)
+
             self.valloader = DataLoader(**valloader_settings)
 
             testloader_settings = self.dataset_setting.get_settings()["testloader"]
             
-            testloader_settings.update({
-                "dataset":self.testset, 
-                "batch_size": batch_size, 
-                "collate_fn": collate_fn
-            })
+            testloader_settings = add_extra_kwargs_to_dataloader(testloader_settings, self.testset, batch_size)
             
             self.testloader = DataLoader(**testloader_settings)
 
@@ -90,34 +78,27 @@ class InstanceAttributeRecognitionTask(BaseTask):
 
             batch_size = self.eval_settings.get_settings()["batch_size"]
 
-            self.evalu_transforms = build_pipeline(self.pipeline_setting.name)(mode="evalu", **self.pipeline_setting.get_settings())
+            self.evalu_transforms = build_pipeline(self.pipeline_setting.name)(
+                mode="evalu", **self.pipeline_setting.get_settings()
+            )
             
             self.testset = build_dataset(self.dataset_setting.name)(
-                mode="test", transform=self.evalu_transforms, **self.dataset_setting.get_settings())
-
-            try:
-                collate_fn = self.testset.collate_fn
-                print("Using dataset collate function")
-            except:
-                collate_fn = None
-                print("Using dataloader default collate function")
-            finally:
-                pass
+                mode="test", transform=self.evalu_transforms, **self.dataset_setting.get_settings()
+            )
             
             testloader_settings = self.dataset_setting.get_settings()["testloader"]
-            
-            testloader_settings.update({
-                "dataset":self.testset, 
-                "batch_size": batch_size, 
-                "collate_fn": collate_fn
-            })
+
+            testloader_settings = add_extra_kwargs_to_dataloader(testloader_settings, self.testset, batch_size)
             
             self.testloader = DataLoader(**testloader_settings)
-    
+
 
     def train(self):
-
-        optimizer = self.model.get_optimizer()
+        
+        if isinstance(self.model, nn.parallel.DistributedDataParallel):
+            optimizer = self.model.module.get_optimizer()
+        else:
+            optimizer = self.model.get_optimizer()
 
         scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=0, factor=0.1, threshold=0)
         
@@ -143,7 +124,10 @@ class InstanceAttributeRecognitionTask(BaseTask):
         print("Testing the model of highest validation mAP.")
         weight_name = self.project + "-model-highest.pth"
         state_dict = torch.load(op.join(self.d_weight, weight_name), map_location=self.device)
-        self.model.load_state_dict(state_dict)
+        if isinstance(self.model, nn.parallel.DistributedDataParallel):
+            self.model.module.load_state_dict(state_dict)
+        else:
+            self.model.load_state_dict(state_dict)
         self.evaluation(model=self.model, dataloader=self.testloader)
         res_dict = {"test_mAP": mAP}
         print("Finish Test")
@@ -157,7 +141,11 @@ class InstanceAttributeRecognitionTask(BaseTask):
             print(f"Loading pretrained weight: {weight_name}")
             state_dict = torch.load(op.join(self.d_weight, weight_name), map_location='cpu')
 
-            missing_keys, unexpected_keys = self.model.load_state_dict(state_dict, strict=False)
+            if isinstance(self.model, nn.parallel.DistributedDataParallel):
+                missing_keys, unexpected_keys = self.model.module.load_state_dict(state_dict, strict=False)
+            else:
+                missing_keys, unexpected_keys = self.model.load_state_dict(state_dict, strict=False)
+
             print(f"Missing keys: {missing_keys}")
             print(f"Unexpected keys: {unexpected_keys}")
             print("Finish ...")
@@ -168,8 +156,6 @@ class InstanceAttributeRecognitionTask(BaseTask):
         
         self.evaluation(self.testloader, self.model)
         
-
-
     def run(self):
         if self.mode == "train":
             self.train()

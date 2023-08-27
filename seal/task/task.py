@@ -21,10 +21,11 @@ class BaseTask(object):
         self.initialize_configs()
         self.initialize_device(self.task_settings.get_settings()["device"])
         self.prepare()
+        self.distribute_type = ""
         
     def initialize_device(self, device):
         
-        self.device = torch.device(f"cuda:{device}" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(f"{device}" if torch.cuda.is_available() else "cpu")
 
     def initialize_configs(self):
        
@@ -45,17 +46,7 @@ class BaseTask(object):
         self.train_settings = self.get_config("train config")
         self.eval_settings = self.get_config("eval config")
 
-    def setup_data_parallel(rank, world_size):
-        # Set up distributed data parallel (DDP) training
-        # Initialize the process group
-        dist.init_process_group(backend='nccl', init_method='env://', rank=rank, world_size=world_size)
 
-        # Set the device to the current GPU
-        torch.cuda.set_device(rank)
-
-    def cleanup_data_parallel():
-        # Clean up distributed data parallel (DDP) training
-        dist.destroy_process_group()
 
     def get_config(self, config_type) -> BaseConfig:
         return self._task_config[config_type]
