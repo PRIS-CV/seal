@@ -1,0 +1,9 @@
+{   
+    "name": "train_one_epoch",
+    "type": "train config",    
+    "settings": {
+        "amp": false,
+        "batch_size": 64,
+        "epochs": 12
+    }
+}

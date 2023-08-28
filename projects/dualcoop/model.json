@@ -1,0 +1,40 @@
+{   
+    "name": "DualCoOp",
+    "type": "model config",
+    "settings": {
+        "finetune_backbone": false,
+        "finetune_attn": false,
+        "f_attribute_index": "data/VAW/data/attribute_index.json",
+        "input_size": 224,
+        "logit_scale": 1,
+        "dir_cache": "/home/wangxinran/.cache/clip/", 
+        "backbone": {
+            "name": "RN101",
+            "img_size": 224,
+            "hidden_dim": 2048,
+            "position_embedding": "sine",
+            "pretrained": true,
+            "pretrained_weight": "/data/wangxinran/weight/pretraining/swintransformer/swin_base_patch4_window7_224_22k.pth"
+        },
+
+        "mlc_prompt_learner": {
+            "n_ctx_pos": 16, 
+            "n_ctx_neg": 16, 
+            "ctx_init_pos": null, 
+            "ctx_init_neg": null,
+            "csc": false
+        },
+        
+        "loss": {
+            "name": "DualAsymmetricLoss", 
+            "gamma_pos": 0,
+            "gamma_neg": 4
+        },
+        
+        "optimizer": {
+            "fast_lr": 7e-5,
+            "base_lr": 1e-5,
+            "weight_decay": 1e-4
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{   
+    "name": "hierarchical_attribute_recognition_evaluation",
+    "type": "eval config",
+    "settings": {
+        "directory": "projects/osarn/log/hierarchical_attribute_recognition_evaluation",
+        "batch_size": 64,
+        "fpath_attr2idx": "data/HVAW/data/attribute_index.json",
+        "fpath_attr_type": "data/HVAW/data/attribute_types.json",
+        "fpath_attr_parent_type": "data/HVAW/data/attribute_parent_types.json",
+        "fpath_attr_headtail": "data/HVAW/data/head_tail.json",
+        "f_hierarchy": "data/HVAW/data/hmat.npy"
+    }
+}
