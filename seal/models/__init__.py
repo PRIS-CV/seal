@@ -43,7 +43,16 @@ def almodel_config(name):
 
 
 for file in os.listdir(os.path.dirname(__file__)):
+
     if file.endswith('.py') and not file.startswith('_'):
         module_name = file[:file.find('.py')]
         module = importlib.import_module('seal.models.' + module_name)
 
+    elif os.path.isdir(os.path.join(os.path.dirname(__file__), file)):
+        module_name = file
+
+        # FIXME monkey patching
+        _not_import_dir = ["__pycache__", "backbone", "decoder", "layer", "loss", "attention"]
+        if module_name not in _not_import_dir :
+            module = importlib.import_module('seal.models.' + module_name)
+        
