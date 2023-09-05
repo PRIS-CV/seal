@@ -4,6 +4,7 @@
     "settings": {
         "finetune_backbone": false,
         "finetune_attn": false,
+        "finetune_text_encoder": false,
         "f_attribute_index": "data/VAW/data/attribute_index.json",
         "input_size": 224,
         "logit_scale": 1,
@@ -16,7 +17,6 @@
             "pretrained": true,
             "pretrained_weight": "/data/wangxinran/weight/pretraining/swintransformer/swin_base_patch4_window7_224_22k.pth"
         },
-
         "mlc_prompt_learner": {
             "n_ctx_pos": 16, 
             "n_ctx_neg": 16, 
@@ -24,16 +24,17 @@
             "ctx_init_neg": null,
             "csc": false
         },
-        
         "loss": {
             "name": "DualAsymmetricLoss", 
             "gamma_pos": 0,
-            "gamma_neg": 4
+            "gamma_neg": 4,
+            "gamma_unl": 4,
+            "alpha_pos": 1,
+            "alpha_neg": 1,
+            "alpha_unl": 1
         },
-        
         "optimizer": {
-            "fast_lr": 7e-5,
-            "base_lr": 1e-5,
+            "lr": 7e-4,
             "weight_decay": 1e-4
         }
     }

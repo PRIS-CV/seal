@@ -3,7 +3,7 @@
     "type": "dataset config",
     "settings": {
         "anno_path": "data/VAW/data",
-        "image_path": "/mnt/sdb/data/wangxinran/dataset/VG",
+        "image_path": "/mnt/sdb/data/wangxinran/dataset/VG/images",
         "trainloader": {
             "num_workers": 8,
             "pin_memory": true,
