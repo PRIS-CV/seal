@@ -2,7 +2,7 @@
     "name": "DualCoOp",
     "type": "model config",
     "settings": {
-        "finetune_backbone": false,
+        "finetune_backbone": true,
         "finetune_attn": false,
         "finetune_text_encoder": false,
         "f_attribute_index": "data/VAW/data/attribute_index.json",
@@ -10,12 +10,11 @@
         "logit_scale": 1,
         "dir_cache": "/home/wangxinran/.cache/clip/", 
         "backbone": {
-            "name": "RN101",
+            "name": "ViT-B/32",
             "img_size": 224,
             "hidden_dim": 2048,
             "position_embedding": "sine",
-            "pretrained": true,
-            "pretrained_weight": "/data/wangxinran/weight/pretraining/swintransformer/swin_base_patch4_window7_224_22k.pth"
+            "pretrained": true
         },
         "mlc_prompt_learner": {
             "n_ctx_pos": 16, 
@@ -27,15 +26,15 @@
         "loss": {
             "name": "DualAsymmetricLoss", 
             "gamma_pos": 0,
-            "gamma_neg": 4,
+            "gamma_neg": 0,
             "gamma_unl": 4,
             "alpha_pos": 1,
             "alpha_neg": 1,
             "alpha_unl": 1
         },
         "optimizer": {
-            "lr": 7e-4,
-            "weight_decay": 1e-4
+            "lr": 7e-5,
+            "weight_decay": 1e-5
         }
     }
 }

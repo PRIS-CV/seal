@@ -1,5 +1,5 @@
 {   
-    "name": "attribute_recognition_evaluation",
+    "name": "softmax_attribute_recognition_evaluation",
     "type": "eval config",
     "settings": {
         "directory": "projects/dualcoop/log/attribute_recognition_evaluation",
