@@ -13,7 +13,7 @@ class Metric(object):
     def get_result(self):
         return self._result
 
-    def clear_result(self):
+    def reset(self):
         self._result = {}
 
 

@@ -34,7 +34,7 @@ class ConstraintViolation(Metric):
     constraint violation.
     """
 
-    def __init__(self, name, adjacency_matrix: np.ndarray) -> None:
+    def __init__(self, name: str, adjacency_matrix: np.ndarray) -> None:
         super().__init__(name)
 
         self.numerator: float = 0.0

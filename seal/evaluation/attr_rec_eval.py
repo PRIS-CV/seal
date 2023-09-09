@@ -56,6 +56,46 @@ class AttributeRecoginitionEvaluation(Evaluation):
         return self._result['MaskedmAP']
 
 
+# FIXME monkey patching 
+@evaluation('softmax_attribute_recognition_evaluation')
+class AttributeRecoginitionEvaluation(Evaluation):
+    
+    def __init__(self, directory, **kwargs):
+        super().__init__(directory)
+
+    def build_metrics(self):
+        self.metrics = [MaskedmAP()]
+    
+    def __call__(self, dataloader, model, *args, **kwargs):
+
+        model.eval()
+        device = next(model.parameters()).device
+        pbar = tqdm(dataloader)
+        pbar.set_description(f'Evaluation')
+        with torch.no_grad():
+            for i, data in enumerate(pbar):
+                targets = data['t']
+                data = load_to_device(data, device)
+                preds = model(data)
+                for metric in self.metrics:
+                    metric.update(preds, targets)
+
+        self.evaluate()
+
+    def evaluate(self):
+
+        for metric in self.metrics:
+            metric.calculate_metric()
+            self._result.update(metric.get_result())
+            metric.reset()
+        
+        self.print_result()
+        self.save_result()
+
+    def get_mAP(self):
+        return self._result['MaskedmAP']
+
+
 @evaluation('vaw_attribute_recognition_evaluation')
 class VAWAttributeRecoginitionEvaluation(Evaluation):
     
