@@ -1,0 +1,17 @@
+{
+    "name": "InstanceAttributeRecognitionTask",
+    "project": "dualcoop",
+    "type": "task config", 
+    "settings": {        
+        "backend": null,
+        "device_id": 0,
+        "device": "cuda", 
+        "d_weight": "projects/dualcoop",
+        "init_method": null,
+        "no_spawn": true,
+        "port": -1,
+        "rank": 0,
+        "type": "data_parallel",
+        "world_size": 1
+    }
+}

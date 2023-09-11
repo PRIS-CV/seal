@@ -2,10 +2,8 @@
     "name": "VAWInstanceLevelDataset", 
     "type": "dataset config",
     "settings": {
-        
-        "anno_path": "data/VAW/data-kn-32",
+        "anno_path": "data/VAW/data",
         "image_path": "/mnt/sdb/data/wangxinran/dataset/VG/images",
-
         "trainloader": {
             "num_workers": 8,
             "pin_memory": true,

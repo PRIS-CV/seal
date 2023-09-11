@@ -72,6 +72,41 @@ class VAWInstancePipeline(Pipeline):
     
     def __call__(self, image, bboxes, mask) -> t.Tuple[Tensor, Tensor, Tensor]:
         return super().__call__(image, bboxes, mask)
+    
+
+@pipeline("OAGroupInstancePipeline")
+class OAGroupInstancePipeline(Pipeline):
+
+    name: str = "OAGroupInstancePipeline"
+    mode_choice: list = ["train", "evalu", "visua"]
+
+    def __init__(self, mode, input_size, **kwargs):
+        
+        if mode == "train":
+            transforms = {
+                "Resize": {"w": input_size, "h": input_size}, 
+                "ToTensor": {},
+                "Normalize": {},
+                "RandomHorizontalFlip": {}
+            }
+        elif mode == "evalu":
+            transforms = {
+                "Resize": {"w": input_size, "h": input_size}, 
+                "ToTensor": {},
+                "Normalize": {},
+            }
+        elif mode == "visua":
+            transforms = {
+            }
+        
+        else:
+            raise ValueError(f"{self.name} only supports mode: {self.mode_choice}.")
+
+        transforms = [build_transform(name)(**args) for name, args in transforms.items()]
+        super().__init__(transforms)
+    
+    def __call__(self, image, bboxes, mask) -> t.Tuple[Tensor, Tensor, Tensor]:
+        return super().__call__(image, bboxes, mask)
 
 
 @pipeline("VAWImagePipeline")

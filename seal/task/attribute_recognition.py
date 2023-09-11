@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data.dataloader import DataLoader
 from torch.optim import lr_scheduler
+import logging
 
 from ..dataset import build_dataset
 from ..data import build_pipeline
@@ -13,6 +14,11 @@ from ..utils import build_train_util
 from ..utils.distributed import is_dist_initialized
 from . import task
 from .task import BaseTask
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 @task("InstanceAttributeRecognitionTask")
@@ -117,11 +123,11 @@ class InstanceAttributeRecognitionTask(BaseTask):
                     weight_name = self.project + "-model-highest.pth"
                     torch.save(self.model.state_dict(), op.join(self.d_weight, weight_name))
                 except:
-                    print("Save Model Weight Failed!")
+                    logger.info("Save Model Weight Failed!")
 
-        print("Finish Train")
+        logger.info("Finish Train")
 
-        print("Testing the model of highest validation mAP.")
+        logger.info("Testing the model of highest validation mAP.")
         weight_name = self.project + "-model-highest.pth"
         state_dict = torch.load(op.join(self.d_weight, weight_name), map_location=self.device)
         if isinstance(self.model, nn.parallel.DistributedDataParallel):
@@ -130,15 +136,15 @@ class InstanceAttributeRecognitionTask(BaseTask):
             self.model.load_state_dict(state_dict)
         self.evaluation(model=self.model, dataloader=self.testloader)
         res_dict = {"test_mAP": mAP}
-        print("Finish Test")
-        print(res_dict)
+        logger.info("Finish Test")
+        logger.info(res_dict)
 
 
     def eval(self):
         
         try:
             weight_name = self.project + "-model-highest.pth"
-            print(f"Loading pretrained weight: {weight_name}")
+            logger.info(f"Loading pretrained weight: {weight_name}")
             state_dict = torch.load(op.join(self.d_weight, weight_name), map_location='cpu')
 
             if isinstance(self.model, nn.parallel.DistributedDataParallel):
@@ -146,13 +152,13 @@ class InstanceAttributeRecognitionTask(BaseTask):
             else:
                 missing_keys, unexpected_keys = self.model.load_state_dict(state_dict, strict=False)
 
-            print(f"Missing keys: {missing_keys}")
-            print(f"Unexpected keys: {unexpected_keys}")
-            print("Finish ...")
+            logger.info(f"Missing keys: {missing_keys}")
+            logger.info(f"Unexpected keys: {unexpected_keys}")
+            logger.info("Finish ...")
         except:
-            print("Cannot find the weight! Using Initialized Weight")
+            logger.info("Cannot find the weight! Using Initialized Weight")
             
-        print("Testing the model of highest validation mAP.")  
+        logger.info("Testing the model of highest validation mAP.")  
         
         self.evaluation(self.testloader, self.model)
         
