@@ -3,14 +3,17 @@ SEAL is a PyTorch-based attribute learning package designed to facilitate the de
 
 ## News 🚀
 
-*August 24, 2023*: One paper accepted in ACM MM 2023: **Hierarchical Visual Attribute Learning in the Wild**. The relevant code is now available. Please see project [osarn](projects/osarn/README.md)
+*August 27, 2023*: SEAL support distributed inference. We add [text retrival image task](seal/task/text_retrieve_image.py).
+
+*August 24, 2023*: One paper accepted in ACM MM 2023: **Hierarchical Visual Attribute Learning in the Wild**. The relevant code is now available. Please see project [osarn](projects/osarn/README.md).
 
 *August 18, 2023*: Add HVAW dataset in `seal/dataset/hvaw.py`. Add new evaluation metric `CV`, `CmAP` and update the evaluation system.
 
 
 ## Plan 📋
-*Distributed Mode* We will soon update distributed training and inference.
+*Distributed Mode*: We will soon update distributed training.
 
+*A Simple Tutorial*: Allow user to quick add their own function based on SEAL.
 
 ## Attribute Learning Models
 

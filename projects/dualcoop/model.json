@@ -7,7 +7,7 @@
         "finetune_text_encoder": false,
         "f_attribute_index": "data/VAW/data/attribute_index.json",
         "input_size": 224,
-        "logit_scale": 1,
+        "logit_scale": 20,
         "dir_cache": "/home/wangxinran/.cache/clip/", 
         "backbone": {
             "name": "ViT-B/32",

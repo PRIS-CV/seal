@@ -63,7 +63,7 @@ def add_weight_decay_and_lr(model, weight_decay=1e-4, fast_lr=0., base_lr=0., sk
         {'params': decay, 'weight_decay': weight_decay},
         {'params': decay_fast, 'weight_decay': weight_decay, 'lr':fast_lr}
     ]
-
+    
 
 def position_embedding(input, d_model):
     input = input.view(-1, 1)

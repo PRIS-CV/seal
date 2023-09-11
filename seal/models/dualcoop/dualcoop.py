@@ -22,12 +22,16 @@ from .dualcoop_clip import build_model_conv_proj
 from ..loss import build_loss
 from ...dataset.utils import load_json
 
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 def load_clip_to_cpu(backbone_name, input_size, dir_cache, feature_aggregation):
     
+    logger.info(f"Initializing CLIP with backbone {backbone_name} ...")
+
     url = clip._MODELS[backbone_name]
     model_path = clip._download(url, root=dir_cache)
     
@@ -80,6 +84,8 @@ class MLCPromptLearner(nn.Module):
         # ctx_init_pos = cfg.TRAINER.COOP_MLC.POSITIVE_PROMPT_INIT.strip()
         # ctx_init_neg = cfg.TRAINER.COOP_MLC.NEGATIVE_PROMPT_INIT.strip()
         dtype = clip_model.dtype
+        # device = torch.device("cuda:0")
+        device = torch.device("cpu")
         ctx_dim = clip_model.ln_final.weight.shape[0]
 
         if ctx_init_pos and ctx_init_neg:
@@ -109,11 +115,11 @@ class MLCPromptLearner(nn.Module):
         else:
             # Random Initialization
             if csc:
-                print("Initializing class-specific contexts")
+                logger.info("Initializing class-specific contexts")
                 ctx_vectors_pos = torch.empty(n_cls, n_ctx_pos, ctx_dim, dtype=dtype)
                 ctx_vectors_neg = torch.empty(n_cls, n_ctx_neg, ctx_dim, dtype=dtype)
             else:
-                print("Initializing a generic context")
+                logger.info("Initializing a generic context")
                 ctx_vectors_pos = torch.empty(n_ctx_pos, ctx_dim, dtype=dtype)
                 ctx_vectors_neg = torch.empty(n_ctx_neg, ctx_dim, dtype=dtype)
             nn.init.normal_(ctx_vectors_pos, std=0.02)
@@ -121,10 +127,10 @@ class MLCPromptLearner(nn.Module):
             prompt_prefix_pos = " ".join(["X"] * n_ctx_pos)
             prompt_prefix_neg = " ".join(["X"] * n_ctx_neg)
 
-        print(f'Initial positive context: "{prompt_prefix_pos}"')
-        print(f'Initial negative  context: "{prompt_prefix_neg}"')
-        print(f"Number of positive context words (tokens): {n_ctx_pos}")
-        print(f"Number of negative context words (tokens): {n_ctx_neg}")
+        logger.info(f'Initial positive context: "{prompt_prefix_pos}"')
+        logger.info(f'Initial negative  context: "{prompt_prefix_neg}"')
+        logger.info(f"Number of positive context words (tokens): {n_ctx_pos}")
+        logger.info(f"Number of negative context words (tokens): {n_ctx_neg}")
 
         self.ctx_pos = nn.Parameter(ctx_vectors_pos)  # to be optimized
         self.ctx_neg = nn.Parameter(ctx_vectors_neg)  # to be optimized
@@ -142,8 +148,8 @@ class MLCPromptLearner(nn.Module):
         tokenized_prompts_pos = torch.cat(tokenized_prompts_pos)
         tokenized_prompts_neg = torch.cat(tokenized_prompts_neg)
         with torch.no_grad():
-            embedding_pos = clip_model.token_embedding(tokenized_prompts_pos).type(dtype)
-            embedding_neg = clip_model.token_embedding(tokenized_prompts_neg).type(dtype)
+            embedding_pos = clip_model.token_embedding(tokenized_prompts_pos.to(device)).type(dtype)
+            embedding_neg = clip_model.token_embedding(tokenized_prompts_neg.to(device)).type(dtype)
 
         # These token vectors will be saved when in save_model(),
         # but they should be ignored in load_model() as we want to use
@@ -269,9 +275,11 @@ class DualCoOp(ALModel):
         
         self.devices = [torch.device(f'cuda:{i + self.start_device}') for i in range(self.num_devices)]
 
+        self.softmax = nn.Softmax(dim=1)
+
         if not finetune_backbone:
             logger.info('Freeze the backbone weights')
-            backbone_params = self.backbone_params()
+            _, backbone_params = self.backbone_params()
             for param in backbone_params:
                 param.requires_grad_(False)
 
@@ -327,9 +335,7 @@ class DualCoOp(ALModel):
 
     def distributed_similarity_computation(self, image_features, distributed_text_features):
         imf_device = image_features
-        # from IPython import embed
-        # embed()
-        # exit()
+
         outputs = []
         for dtf in distributed_text_features:
             dtf_device = dtf.device
@@ -338,8 +344,8 @@ class DualCoOp(ALModel):
             if self.feature_aggregation:
                 output = 20 * F.conv1d(image_features, dtf[:, :, None]).to(imf_device)
             else:
-                output = image_features @ dtf.T
-            
+                output = self.logit_scale * image_features @ dtf.T
+                
             outputs.append(output)
         
         return torch.cat(outputs, dim=1)
@@ -360,31 +366,21 @@ class DualCoOp(ALModel):
 
         distributed_text_features = self.distributed_extract_text_features(dist_prompts, dist_tokenized_prompts)
 
-        # text_features = self.text_encoder(prompts, tokenized_prompts)
-        # normalize features
-        # text_features = text_features / text_features.norm(dim=-1, keepdim=True)
-
         image_features_norm = image_features / image_features.norm(dim=1, keepdim=True)
-
-        # Class-Specific Region Feature Aggregation
-        # output = 20 * F.conv1d(image_features_norm, text_features[:, :, None])
 
         output = self.distributed_similarity_computation(image_features_norm, distributed_text_features)
 
         b, c = output.shape[0], output.shape[1]
-        # output_half = output[:,  c // 2:]
-        # w_half = F.softmax(output_half, dim=-1)
-        # w = torch.cat([w_half, w_half], dim=1)
-        # output = 5 * (output * w).sum(-1)
 
         # convert the shape of logits to [b, 2, num_class]
-        logits = output.resize(b, 2, c//2)
+        logits = output.reshape(b, 2, c//2)
 
         if self.training:
             return logits
-    
-        return logits[:, 0, :].squeeze(1)
 
+        logits = self.softmax(logits)[:, 1]
+        return logits
+    
     def text_encoder_params(self):
         params = []
         for name, param in self.named_parameters():
@@ -393,11 +389,12 @@ class DualCoOp(ALModel):
         return params
 
     def backbone_params(self):
-        params = []
+        names, params = [], []
         for name, param in self.named_parameters():
             if "image_encoder" in name and "prompt_learner" not in name and 'attnpool' not in name:
+                names.append(name)
                 params.append(param)
-        return params
+        return names, params
 
     def attn_params(self):
         params = []
@@ -407,11 +404,12 @@ class DualCoOp(ALModel):
         return params
 
     def prompt_params(self):
-        params = []
+        names, params = [], []
         for name, param in self.named_parameters():
             if "prompt_learner" in name:
                 params.append(param)
-        return params
+                names.append(name)
+        return names, params
     
     def get_params(self):
         names, params = [], []
@@ -419,13 +417,14 @@ class DualCoOp(ALModel):
             if p.requires_grad:
                 params.append(p)
                 names.append(n)
+
         logger.info(f"Training parameters: {names}.")
         return params
 
     def get_optimizer(self):
         params = self.get_params()
-        return torch.optim.Adam(params=params, lr=self.optim_set["lr"], weight_decay=0)
-        # return torch.optim.SGD(params=params, lr=self.optim_set["lr"], weight_decay=0)
+        return torch.optim.AdamW(params=params, lr=self.optim_set["lr"], weight_decay=0)
+        # return torch.optim.SGD(params=params, lr=self.optim_set["lr"], weight_decay=1e-5, momentum=0.9)
     
     def compute_loss(self, pred, target):
         loss = self.loss_fn(pred, target)
