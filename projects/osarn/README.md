@@ -45,10 +45,21 @@ Following works inspired us:
 ## Citation
 If our work inspired you or help you, please consider citing it:
 ```
-@InProceedings{liang2023hierarchical,
-  title={Hierarchical Visual Attribute Learning in the Wild},
-  author={Liang, Kongming and Wang, Xinran and Zhang, Haiwen and Ma, Zhanyu and Guo, Jun},
-  booktitle = {ACM International Conference on Multimedia},
-  year={2023}
+@inproceedings{10.1145/3581783.3612274,
+author = {Liang, Kongming and Wang, Xinran and Zhang, Haiwen and Ma, Zhanyu and Guo, Jun},
+title = {Hierarchical Visual Attribute Learning in the Wild},
+year = {2023},
+isbn = {9798400701085},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3581783.3612274},
+doi = {10.1145/3581783.3612274},
+abstract = {Observing objects' attributes at different levels of detail is a fundamental aspect of how humans perceive and understand the world around them. Existing studies focused on attribute prediction in a flat way, but they overlook the underlying attribute hierarchy, e.g., navy blue is a subcategory of blue. In recent years, large language models, e.g., ChatGPT, have emerged with the ability to perform an extensive range of natural language processing tasks like text generation and classification. The factual knowledge learned by LLM can assist us build the hierarchical relations of visual attributes in the wild. Based on that, we propose a model called the object-specific attribute relation net, which takes advantage of three types of relations among attributes - positive, negative, and hierarchical - to better facilitate attribute recognition in images. Guided by the extracted hierarchical relations, our model can predict attributes from coarse to fine. Additionally, we introduce several evaluation metrics for attribute hierarchy to comprehensively assess the model's ability to comprehend hierarchical relations. Our extensive experiments demonstrate that our proposed hierarchical annotation brings improvements to the model's understanding of hierarchical relations of attributes, and the object-specific attribute relation net can recognize visual attributes more accurately.},
+booktitle = {Proceedings of the 31st ACM International Conference on Multimedia},
+pages = {3415–3423},
+numpages = {9},
+keywords = {hierarchical multi-label learning, large language model, attribute learning},
+location = {Ottawa ON, Canada},
+series = {MM '23}
 }
 ```
